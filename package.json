@@ -1,11 +1,17 @@
 {
   "name": "i18n-light",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "mocha tests/test.js"
   },
+  "keywords": [
+    "i18n-light",
+    "i18n",
+    "multilingual",
+    "internationalization"
+  ],
   "author": "Luca Tabone <taboneluca3@gmail.com>",
   "license": "MIT",
   "devDependencies": {
