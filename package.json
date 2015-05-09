@@ -1,0 +1,17 @@
+{
+  "name": "i18n-light",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha tests/test.js"
+  },
+  "author": "Luca Tabone <taboneluca3@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^2.2.4"
+  },
+  "dependencies": {
+    "sprintf-js": "^1.0.2"
+  }
+}
