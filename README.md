@@ -60,7 +60,8 @@ Method used to get the current locale.
         "hello": "hello $s"
       }
     }
-    
+
+#### EJS Template
     <%= i18n.__('hello', 'node')%>    //will output 'hello node'
 
 ### i18n.__n(path[,arg1 [,arg2[,..]]], count)
