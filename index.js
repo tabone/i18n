@@ -59,7 +59,7 @@ i18n.prototype.configure = function(opts) {
     }
   }
 
-  this._currentLocale = this._config.defaultLocale
+  this.resetLocale()
   this._getContext()
   return this
 }
@@ -70,10 +70,20 @@ i18n.prototype.configure = function(opts) {
 i18n.prototype.init = function() {
   var self = this
   return function(req, res, next) {
+    self.resetLocale()
     res.i18n = self
     res.locals.i18n = self
     next()
   }
+}
+
+/**
+ * Method used to reset the current locale back to the default one.
+ * @return {i18n} The instance itself.
+ */
+i18n.prototype.resetLocale = function() {
+  this._currentLocale = this._config.defaultLocale
+  return this;
 }
 
 /**
