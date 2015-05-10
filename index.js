@@ -112,26 +112,31 @@ i18n.prototype.setLocale = function(locale) {
  */
 i18n.prototype.__ = function(path){
   var args = Array.prototype.slice.call(arguments, 1)
-  return sprintf.vsprintf(this._getPhrase(path), args)
+  return sprintf.vsprintf(this._translate(path), args)
 }
 
 i18n.prototype.__n = function(path) {
-  var args = Array.prototype.slice.call(arguments, 1)
-  var count = arguments[arguments.length - 1]
+  if(arguments.length === 1) {
+    return this.__(path)
+  } else if(typeof arguments[arguments.length - 1] === 'number') {
+    var args = Array.prototype.slice.call(arguments, 1)
+    var count = arguments[arguments.length - 1]
 
-  if(count === 0) {
-    path += '.zero'
-  } else if(count === 1)  {
-    path += '.one'
+    if(count === 0) {
+      path += '.zero'
+    } else if(count === 1)  {
+      path += '.one'
+    } else {
+      path += '.many'
+
+    }
+    return sprintf.vsprintf(this._translate(path), args)
   } else {
-    path += '.many'
-
-  }
-
-  return sprintf.vsprintf(this._getPhrase(path), args)
+    throw new Error('Last parameter should be a number.')
+  } 
 }
 
-i18n.prototype._getPhrase = function(path, def) {
+i18n.prototype._translate = function(path, def) {
   var obj = (def) ? (this._context[this._config.defaultLocale])
       : (this._context[this._currentLocale])
     , str = path
@@ -145,7 +150,7 @@ i18n.prototype._getPhrase = function(path, def) {
       }
     } else if(this._currentLocale !== this._config.defaultLocale
         && !(def) && (this._config.fallback)) {
-      str = this._getPhrase(path, true)
+      str = this._translate(path, true)
     }
   }.bind(this))
 
