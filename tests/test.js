@@ -1,11 +1,22 @@
 "use strict";
 
 var assert  = require('assert')
-  , i18n    = require('../index')
+  , i18n    = undefined
   , path    = require('path')
   , opts    = {}
 
 describe('i18n-light module', function() {
+  beforeEach(function() {
+    i18n = require('../index')
+    i18n._config = {}
+    i18n._context = {}
+    i18n._currentLocale = undefined
+  })
+
+  afterEach(function() {
+    i18n = undefined
+  })
+
   describe('configure method', function() {
     beforeEach(function() {
       opts = {
@@ -15,10 +26,6 @@ describe('i18n-light module', function() {
       }
     })
 
-    afterEach(function() {
-      i18n._config = {}
-    })
-
     it('should throw an error if \'defaultLocale\' is not set', function() {
       delete opts.defaultLocale
       assert.throws(function() {
@@ -26,11 +33,24 @@ describe('i18n-light module', function() {
       })
     })
 
-    it('should throw an error if \'dir\' is not set', function() {
-      delete opts.dir
-      assert.throws(function() {
-        i18n.configure(opts)
+    describe('\'dir\' configuration', function() {
+      beforeEach(function() {
+        opts.dir = path.join(__dirname, 'locale')
+        opts.context = {
+          'en': {
+            'hello': 'hi'
+          }
+        }
       })
+
+      it('should throw an error if both \'dir\' and its alternative, '
+        + '\'context\', are not defined', function() {
+          delete opts.dir
+          delete opts.context
+          assert.throws(function() {
+            i18n.configure(opts)
+          })
+        })
     })
 
     it('should default the \'fallback\' value to true', function() {
@@ -42,9 +62,50 @@ describe('i18n-light module', function() {
     it('should assign the config values to the one passed as parameter.'
         , function() {
           i18n.configure(opts)
-          assert((i18n._config.dir === opts.dir)
-              && (i18n._config.defaultLocale === opts.defaultLocale)
-              && (i18n._config.fallback === opts.fallback))
+
+          for(var key in opts) {
+            if(i18n._config[key] !== opts[key]) {
+              assert(false)
+            }
+          }
+          assert(true)
+        })
+
+    it('should assign the config values to the one passed as parameter. '
+       + '- \'context\' version'
+        , function() {
+          delete opts.dir
+          opts.context = {
+            'en': {
+              'message' : {
+                'hello': 'hi'
+              }
+            }
+          }
+
+          i18n.configure(opts)
+
+          for(var key in opts) {
+            if(i18n._config[key] !== opts[key]) {
+              assert(false)
+            }
+          }
+          assert(true)
+        })
+
+    it('should include the \'context\' value to the i18n._context object'
+        , function() {
+          delete opts.dir
+          opts.context = {
+            'en': {
+              'message' : {
+                'hello': 'hi'
+              }
+            }
+          }
+
+          i18n.configure(opts)
+          assert(i18n._context == opts.context)
         })
 
     it('should consider an empty string as not a valid config value '
