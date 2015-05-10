@@ -34,7 +34,13 @@ var i18n = function() {
       required: true
     },
     dir: {
-      required: true
+      required: true,
+      alt: {
+        name: 'context',
+        run: function(opt) {
+          this._context = opt
+        }
+      }
     },
     fallback: {
       value: true
@@ -53,7 +59,19 @@ i18n.prototype.configure = function(opts) {
         && ((typeof opts[key] !== 'string') || (opts[key].length > 0))) {
       this._config[key] = opts[key]
     } else if(this._configDetails[key].required) {
-      throw new Error('Please provide a ' + key + ' for your application.')
+      if(this._configDetails[key].alt !== undefined) {
+        if(opts[this._configDetails[key].alt.name] !== undefined) {
+          this._config[this._configDetails[key].alt.name]
+              = opts[this._configDetails[key].alt.name]
+
+          this._configDetails[key].alt
+              .run.call(this, opts[this._configDetails[key].alt.name])
+        } else {
+          throw new Error('')
+        }
+      } else {
+        throw new Error('Please provide a ' + key + ' for your application.')
+      }
     } else if(this._configDetails[key].value !== undefined) {
       this._config[key] = this._configDetails[key].value
     }
@@ -91,7 +109,8 @@ i18n.prototype.resetLocale = function() {
  * @return {i18n} The instance itself
  */
 i18n.prototype._getContext = function() {
-  if(this._context[this._currentLocale] === undefined)
+  if(this._context[this._currentLocale] === undefined
+      && this._config.context === undefined)
     this._context[this._currentLocale] 
         = require(path.join(this._config.dir, (this._currentLocale + '.js')))
   return this
