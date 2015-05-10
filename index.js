@@ -49,9 +49,8 @@ var i18n = function() {
  */
 i18n.prototype.configure = function(opts) {
   for(var key in this._configDetails) {
-    if(opts[key] !== undefined
-        && (typeof opts[key] === 'boolean'
-        || opts[key].length > 0)) {
+    if((opts[key] !== undefined)
+        && ((typeof opts[key] !== 'string') || (opts[key].length > 0))) {
       this._config[key] = opts[key]
     } else if(this._configDetails[key].required) {
       throw new Error('Please provide a ' + key + ' for your application.')
@@ -133,12 +132,11 @@ i18n.prototype.__n = function(path) {
 }
 
 i18n.prototype._getPhrase = function(path, def) {
-  var arr = path.split('.')
-    , obj = (def) ? (this._context[this._config.defaultLocale])
+  var obj = (def) ? (this._context[this._config.defaultLocale])
       : (this._context[this._currentLocale])
     , str = path
 
-  arr.forEach(function(data) {
+  path.split('.').forEach(function(data) {
     if(obj[data] !== undefined) {
       if(typeof obj[data] === 'string') {
         str = obj[data]
