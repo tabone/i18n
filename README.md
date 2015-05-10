@@ -52,6 +52,9 @@ Method used to change the current locale.
 ### i18n.getLocale()
 Method used to get the current locale.
 
+### i18n.resetLocale()
+Method used to reset the current locale back to the default locale.
+
 ### i18n.__(path[,arg1 [,arg2[,..]]])
 
 #### Dictionary
