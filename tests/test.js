@@ -110,6 +110,22 @@ describe('i18n-light module', function() {
     })
   })
 
+  describe('resetLocale method', function() {
+    beforeEach(function() {
+      opts = {
+        defaultLocale: 'en',
+        dir: path.join(__dirname, 'locale'),
+        fallback: false
+      }
+      i18n.configure(opts)
+      i18n.setLocale('it')
+    })
+    it('should reset the current locale back to default local.', function() {
+      i18n.resetLocale()
+      assert(i18n.getLocale() === opts.defaultLocale)
+    })
+  })
+
   describe('_translate method', function() {
     beforeEach(function() {
       opts = {
