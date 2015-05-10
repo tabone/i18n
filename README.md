@@ -1,6 +1,3 @@
-# i18n
-Lightweight NodeJS Internationalization Middleware
-
 # Installation
 
     npm install --save i18n-light
@@ -31,7 +28,7 @@ Lightweight NodeJS Internationalization Middleware
     
     require('http').createServer(app).listen(8080)
 
-## Explaination
+## Middleware Integration
 
 ### .configure
 As one can see the only configurations which `i18n-light` needs are three things:
@@ -40,12 +37,13 @@ As one can see the only configurations which `i18n-light` needs are three things
 |----------------|------|-------------|
 | `defaultLocale` | String | The locale which will be considered as current locale when i18n is configured. This is also the locale which will be used as a fallback for any keywords which are not found in the dictionary locale being used. |
 | `dir` | String | This is the directory where `i18n-light` will look for locale specific dictionaries. |
+| `context` | Object | Instead of using `dir` to inject dictionaries, you can pass the dictionaries through the `context`. `i18n-light` will only look for this attribute if `dir` isn't specified. More information below. |
 | `fallback` | Boolean  | Indicates whether to use the default locale as a fallback when a keyword is missing. |
 
 ## .init()
 This is where `i18n-light` merges with Expressjs. Here a the `i18n-light` instance just configured is placed inside `response` object and is accessible from `res.i18n`. In addition to this it is also placed inside the `response.locals` object, making `i18n-light` accessibile from your views.
 
-##Methods
+## Methods
 ### i18n.setLocale(locale)
 Method used to change the current locale.
 
@@ -83,7 +81,7 @@ Method used to reset the current locale back to the default locale.
     <%= i18n.__n('messages', 1) %>        //Will output 'one message'
     <%= i18n.__n('messages', 5, 5) %>     //Will output '5 messages'
 
-##Dictionaries
+## Dictionaries
 Dictionaries are just simple Node modules which exports JSON. It is important to name your dictionary the same as the locale. For example for locale `en`, the dictionary shall be named `en.js`.
 
     module.exports = {
@@ -91,3 +89,29 @@ Dictionaries are just simple Node modules which exports JSON. It is important to
         "hello": "hello"
       }
     }
+
+## Dictionaries Through `context` Config.
+Intead of using the `dir` attribute to point to the dictionaries directory, you have the possibility to inject your own dictionaries during the configuration. As already stated, in order for `i18n-light` to use the `context` config you must not provide the `dir` config.
+
+Example of context object:
+    
+    {
+      "en": {
+        "greetings": "hi"
+      },
+      "it": {
+        "greetings": "ciao"
+      }
+    }
+
+This feature makes this module more easy to integrate with `Browserify` on your client side.
+
+    var i18n = require('i18n-light');
+
+    i18n.configure({
+      defaultLocale: document.documentElement.lang,
+      context: {
+        'en': require('./locale/en'),
+        'it': require('./locale/it')
+      }
+    })
