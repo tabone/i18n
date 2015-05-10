@@ -49,7 +49,9 @@ var i18n = function() {
  */
 i18n.prototype.configure = function(opts) {
   for(var key in this._configDetails) {
-    if(opts[key] !== undefined && opts[key].length > 0) {
+    if(opts[key] !== undefined
+        && (typeof opts[key] === 'boolean'
+        || opts[key].length > 0)) {
       this._config[key] = opts[key]
     } else if(this._configDetails[key].required) {
       throw new Error('Please provide a ' + key + ' for your application.')
