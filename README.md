@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/tabone/i18n.svg?branch=master)](https://travis-ci.org/tabone/i18n)
+
 # Installation
 
     npm install --save i18n-light
