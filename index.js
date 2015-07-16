@@ -53,7 +53,7 @@ var i18n = function() {
  * @param  {Object} opts  Configuration object.
  * @return {i18n}         The object itself.
  */
-i18n.prototype.configure = function(opts) {
+i18n.prototype.configure = function configure(opts) {
   for(var key in this._configDetails) {
     if((opts[key] !== undefined)
         && ((typeof opts[key] !== 'string') || (opts[key].length > 0))) {
@@ -85,7 +85,7 @@ i18n.prototype.configure = function(opts) {
 /**
  * Method used to integrate this object with the middleware.
  */
-i18n.prototype.init = function() {
+i18n.prototype.init = function init() {
   var self = this
   return function(req, res, next) {
     self.resetLocale()
@@ -99,7 +99,7 @@ i18n.prototype.init = function() {
  * Method used to reset the current locale back to the default one.
  * @return {i18n} The instance itself.
  */
-i18n.prototype.resetLocale = function() {
+i18n.prototype.resetLocale = function resetLocale() {
   this._currentLocale = this._config.defaultLocale
   return this;
 }
@@ -108,7 +108,7 @@ i18n.prototype.resetLocale = function() {
  * Method used to retrieve the context from the specified directory.
  * @return {i18n} The instance itself
  */
-i18n.prototype._getContext = function() {
+i18n.prototype._getContext = function _getContext() {
   if(this._context[this._currentLocale] === undefined
       && this._config.context === undefined)
     this._context[this._currentLocale] 
@@ -120,7 +120,7 @@ i18n.prototype._getContext = function() {
  * Method used to get the current locale.
  * @return {String} The current locale
  */
-i18n.prototype.getLocale = function() {
+i18n.prototype.getLocale = function getLocale() {
   return this._currentLocale
 }
 
@@ -128,7 +128,7 @@ i18n.prototype.getLocale = function() {
  * Method used to change the locale.
  * @param {String} locale The new locale
  */
-i18n.prototype.setLocale = function(locale) {
+i18n.prototype.setLocale = function setLocale(locale) {
   this._currentLocale = locale
   this._getContext()
 }
@@ -139,12 +139,12 @@ i18n.prototype.setLocale = function(locale) {
  * @param  {Boolean}  def  True if the default locale will be used false other wise
  * @return {String}      The phrase
  */
-i18n.prototype.__ = function(path){
+i18n.prototype.__ = function __(path){
   var args = Array.prototype.slice.call(arguments, 1)
   return sprintf.vsprintf(this._translate(path), args)
 }
 
-i18n.prototype.__n = function(path) {
+i18n.prototype.__n = function __n(path) {
   if(arguments.length === 1) {
     return this.__(path)
   } else if(typeof arguments[arguments.length - 1] === 'number') {
@@ -165,7 +165,7 @@ i18n.prototype.__n = function(path) {
   } 
 }
 
-i18n.prototype._translate = function(path, def) {
+i18n.prototype._translate = function _translate(path, def) {
   var obj = (def) ? (this._context[this._config.defaultLocale])
       : (this._context[this._currentLocale])
     , str = path
