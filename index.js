@@ -1,12 +1,5 @@
 'use strict'
 /**
- * Dictionaries (files):
- * Dictionary Path:
- * Locale:
- * Dicionary Contexts
- */
-
-/**
  * i18n-light object.
  * @type {Object}
  */
