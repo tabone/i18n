@@ -13,6 +13,9 @@ My main motivation in developing `i18n-light` was to create a localization modul
 ```javascript
 var express = require('express')
   , app = express()
+  , i18n = require('i18n-light')
+
+...
 
 i18n.configure({
   dir: path.join(__dirname, 'dict'),
@@ -35,6 +38,8 @@ app.get('/it', function(req, res) {
   res.send(i18n.__('hello'))
 })
 
+...
+
 require('http').createServer(app).listen(8080)
 ```
 
@@ -56,3 +61,147 @@ require('http').createServer(app).listen(8080)
 | `refresh` | `Boolean` | `false` | Indicates whether `i18n-light` should retrieve an update of the `dictionary context` (`true`) or keep using what is already cached (`false`). |
 | `cache` | `Boolean` | `true` | Indicates whether `i18n-light` should cache `dictionary context`s (`true`) or not (`false`). |
 | `extension` | `String` | `.js` | The `extension` of the `dictionary` files. |
+
+## API
+### configure(opts)
+Method used to configure (initiate) an instance of `i18n-light`. Take a look at the [options section](#options) to understand what options it accepts.
+
+```javascript
+...
+i18n.configure({
+  dir: path.join(__dirname, 'dict'),
+  defaultLocale: 'en',
+  fallback: true
+})
+...
+```
+
+### init()
+Middleware method. This is the method used to integrate `i18n-light` instance to `Express`. Take a look at the (usage section)[#usage] to see how this can be easily done.
+
+```javascript
+...
+app.use(i18n.init())
+...
+```
+
+### resetLocale([refresh])
+Method used to reset the current locale to the default locale. It has an optional parameter `refresh` which when its `true` it updates the dictionary context of the default locale.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en'
+  ...
+})
+...
+i18n.setLocale('it')  //default locale is now 'it'
+...
+i18n.resetLocale()  //default locale is now 'en'
+```
+
+### setLocale(locale[, refresh])
+Method used to change the current locale of your `i18n-light` instance to `locale`. It has an `optional` argument `refresh` which when its `true` it updates the dictionary context of the `locale`.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en'
+  ...
+})
+...
+i18n.setLocale('it')  //default locale is now 'it'
+```
+
+### getLocale()
+Method used to get the name of the current locale.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en'
+  ...
+})
+...
+i18n.getLocale()  // => en
+...
+i18n.setLocale('it')
+...
+i18n.getLocale()  // => it
+```
+
+### localeCached(locale)
+Method used to check whether a `dictionary context` of a `locale` is cached or not.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en'
+  ...
+})
+...
+i18n.localeCached('en')  // => true
+...
+i18n.localeCached('it')  // => false
+...
+i18n.setLocale('it')
+...
+i18n.localeCached('it')  // => true
+```
+
+### setDefaultLocale(locale)
+Method used to change the default locale of your `i18n-light` instance to `locale`.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en'
+  ...
+})
+...
+i18n.getLocale()              // => en
+...
+i18n.setDefaultLocale('it')   // => true
+...
+i18n.getLocale('it')          // => it
+```
+
+### refreshContext([locale])
+Method used to refresh the `dictionary context` of `locale`.
+
+### clearCache([refresh])
+Method used to clear the cache of your `i18n-light` instance.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en'
+  ...
+})
+...
+i18n.setLocale('it')    // => en
+...
+i18n.localeCached('en') // => true
+i18n.localeCached('it') // => true
+...
+i18n.clearCache()
+...
+i18n.localeCached('en') // => false
+i18n.localeCached('it') // => false
+```
+
+It has an `optional` argument `refresh` which when its true, it refreshes the `dictionary context` of the current locale.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en'
+  ...
+})
+...
+i18n.setLocale('it')    // => en
+...
+i18n.localeCached('en') // => true
+i18n.localeCached('it') // => true
+...
+i18n.clearCache(true)
+...
+i18n.localeCached('en') // => false
+i18n.localeCached('it') // => true
+```
+
+### __(path[,arg1 [,arg2[,..]]])
+### __n(path[,arg1 [,arg2[,..]]], count)
