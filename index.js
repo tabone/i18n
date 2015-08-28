@@ -122,6 +122,20 @@ i18n._setExtension = function _setExtension(extension) {
 }
 
 /**
+ * i18n-light middleware function.
+ * @return {Function}     middleware
+ */
+i18n.init = function init() {
+  var self = this
+  return function(req, res, next) {
+    self.resetLocale()
+    res.i18n = self
+    res.locals.i18n = self
+    next()
+  }
+}
+
+/**
  * method used to reset the current locale back to the
  * default locale.
  * @param {Boolean}   refresh     indicates whether the dictionary
@@ -214,13 +228,12 @@ i18n.setLocale = function setLocale(locale, refresh) {
 }
 
 /**
- * method used to determine whether a locale has
- * cached dictionary context or not.
- * @param  {String}     locale    the locale name
- * @return {Boolean}    True if it has, false otherwise
+ * method used to return the current locale i18n-light is
+ * using.
+ * @return {String}     the current locale.
  */
-i18n.isCached = function isCached(locale) {
-  return !(this._context[locale] === undefined)
+i18n.getLocale = function getLocale() {
+  return this._currentLocale
 }
 
 /**
@@ -230,15 +243,6 @@ i18n.isCached = function isCached(locale) {
 i18n.setDefaultLocale = function setDefaultLocale(locale) {
   this._defaultLocale = locale
   return this
-}
-
-/**
- * method used to return the current locale i18n-light is
- * using.
- * @return {String}     the current locale.
- */
-i18n.getLocale = function getLocale() {
-  return this._currentLocale
 }
 
 /**
@@ -262,6 +266,15 @@ i18n.refreshContext = function refreshContext(locale) {
 }
 
 /**
+ * method used to get the dictionary context of a particular locale.
+ * @param  {String}   locale    the locale name.
+ * @return {Object}   The dictionary context
+ */
+i18n._getContext = function _getContext(locale) {
+  return this._context[locale]
+}
+
+/**
  * method used to clear the context object cached data.
  * @param  {Boolean}    refresh    indicates whether to retrieve 
  *                                 the dictionary context of the
@@ -275,26 +288,13 @@ i18n.clearCache = function clearCache(refresh) {
 }
 
 /**
- * method used to get the dictionary context of a particular locale.
- * @param  {String}   locale    the locale name.
- * @return {Object}   The dictionary context
+ * method used to determine whether a locale has
+ * cached dictionary context or not.
+ * @param  {String}     locale    the locale name
+ * @return {Boolean}    True if it has, false otherwise
  */
-i18n._getContext = function _getContext(locale) {
-  return this._context[locale]
-}
-
-/**
- * i18n-light middleware function.
- * @return {Function}     middleware
- */
-i18n.init = function init() {
-  var self = this
-  return function(req, res, next) {
-    self.resetLocale()
-    res.i18n = self
-    res.locals.i18n = self
-    next()
-  }
+i18n.isCached = function isCached(locale) {
+  return !(this._context[locale] === undefined)
 }
 
 /**
