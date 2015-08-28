@@ -450,7 +450,7 @@ describe('i18n-light module', function() {
     
   })
 
-  describe('localeCached', function() {
+  describe('isCached', function() {
     var noExistantLocale = 'es'
 
     beforeEach(function() {
@@ -464,11 +464,11 @@ describe('i18n-light module', function() {
     })
 
     it('should return true if \'locale\' is cached', function() {
-      assert(i18n.localeCached('en'))
+      assert(i18n.isCached('en'))
     })
 
     it('should return false if \'locale\' is not cached.', function() {
-      assert(i18n.localeCached(noExistantLocale))
+      assert(!i18n.isCached(noExistantLocale))
     })
   })
 
