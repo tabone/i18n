@@ -86,7 +86,7 @@ app.use(i18n.init())
 ```
 
 ### resetLocale([refresh])
-Method used to reset the current locale to the default locale. It has an optional parameter `refresh` which when its `true` it updates the dictionary context of the default locale.
+Method used to reset the current locale to the default one. It has an optional parameter `refresh` which when its `true` `i18n-light` updates the dictionary context of the default locale.
 
 ```javascript
 i18n.configure({
@@ -100,7 +100,7 @@ i18n.resetLocale()  //default locale is now 'en'
 ```
 
 ### setLocale(locale[, refresh])
-Method used to change the current locale of your `i18n-light` instance to `locale`. It has an `optional` argument `refresh` which when its `true` it updates the dictionary context of the `locale`.
+Method used to change the current locale of your `i18n-light` instance to `locale`. It has an `optional` argument `refresh` which when its `true`, `i18n-light` updates the dictionary context of `locale`.
 
 ```javascript
 i18n.configure({
@@ -128,7 +128,7 @@ i18n.getLocale()  // => it
 ```
 
 ### isCached(locale)
-Method used to check whether a `dictionary context` of a `locale` is cached or not.
+Method used to check whether a `dictionary context` of `locale` is cached or not.
 
 ```javascript
 i18n.configure({
@@ -184,7 +184,7 @@ i18n.isCached('en') // => false
 i18n.isCached('it') // => false
 ```
 
-It has an `optional` argument `refresh` which when its true, it refreshes the `dictionary context` of the current locale.
+It has an `optional` argument `refresh` which when its true, `i18n-light` refreshes the `dictionary context` of the current locale.
 
 ```javascript
 i18n.configure({
@@ -221,4 +221,4 @@ i18n.configure({
 })
 ```
 
-If your dictionaries are dynamic take a look at [bulk-require module](https://www.npmjs.com/package/bulk-require)
+If your dictionaries are dynamic take a look at [bulk-require module](https://www.npmjs.com/package/bulk-require).
