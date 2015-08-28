@@ -1,0 +1,11 @@
+{
+  "home": {
+    "logout": "Esci",
+    "loggedin": "Ciao %s",
+    "messages": {
+      "zero": "0 messaggi",
+      "one": "1 messaggio",
+      "many": "%s messaggi"
+    }
+  }
+}

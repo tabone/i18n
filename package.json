@@ -1,6 +1,6 @@
 {
   "name": "i18n-light",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,8 @@
     "i18n-light",
     "i18n",
     "multilingual",
-    "internationalization"
+    "internationalization",
+    "middleware"
   ],
   "repository": {
     "type": "git",
