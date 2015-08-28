@@ -205,3 +205,20 @@ i18n.isCached('it') // => true
 
 ### __(path[,arg1 [,arg2[,..]]])
 ### __n(path[,arg1 [,arg2[,..]]], count)
+
+## Browserify
+Intead of using the `dir` option to point to the dictionaries directory, you have the possibility to inject your own `dictionary context`s during the configuration of `i18n-light` instance using `context` option. As already stated, in order for `i18n-light` to use the `context` option, the `dir` option needs to be omitted.
+
+```javascript
+var i18n = require('i18n-light');
+
+i18n.configure({
+  defaultLocale: document.documentElement.lang,
+  context: {
+    'en': require('./locale/en'),
+    'it': require('./locale/it')
+  }
+})
+```
+
+If your dictionaries are dynamic take a look at [bulk-require module](https://www.npmjs.com/package/bulk-require)
