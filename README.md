@@ -127,7 +127,7 @@ i18n.setLocale('it')
 i18n.getLocale()  // => it
 ```
 
-### localeCached(locale)
+### isCached(locale)
 Method used to check whether a `dictionary context` of a `locale` is cached or not.
 
 ```javascript
@@ -136,13 +136,13 @@ i18n.configure({
   ...
 })
 ...
-i18n.localeCached('en')  // => true
+i18n.isCached('en')  // => true
 ...
-i18n.localeCached('it')  // => false
+i18n.isCached('it')  // => false
 ...
 i18n.setLocale('it')
 ...
-i18n.localeCached('it')  // => true
+i18n.isCached('it')  // => true
 ```
 
 ### setDefaultLocale(locale)
@@ -175,13 +175,13 @@ i18n.configure({
 ...
 i18n.setLocale('it')    // => en
 ...
-i18n.localeCached('en') // => true
-i18n.localeCached('it') // => true
+i18n.isCached('en') // => true
+i18n.isCached('it') // => true
 ...
 i18n.clearCache()
 ...
-i18n.localeCached('en') // => false
-i18n.localeCached('it') // => false
+i18n.isCached('en') // => false
+i18n.isCached('it') // => false
 ```
 
 It has an `optional` argument `refresh` which when its true, it refreshes the `dictionary context` of the current locale.
@@ -194,13 +194,13 @@ i18n.configure({
 ...
 i18n.setLocale('it')    // => en
 ...
-i18n.localeCached('en') // => true
-i18n.localeCached('it') // => true
+i18n.isCached('en') // => true
+i18n.isCached('it') // => true
 ...
 i18n.clearCache(true)
 ...
-i18n.localeCached('en') // => false
-i18n.localeCached('it') // => true
+i18n.isCached('en') // => false
+i18n.isCached('it') // => true
 ```
 
 ### __(path[,arg1 [,arg2[,..]]])

@@ -151,7 +151,7 @@ i18n.setLocale = function setLocale(locale, refresh) {
    *     2. refresh is true.
    *     3. refresh is undefined and this._refresh is true.
    */
-  if(!(this.localeCached(this._currentLocale))) {
+  if(!(this.isCached(this._currentLocale))) {
     if(!(this._cache)) {
       //clear cache only if this._cache === false
       this.clearCache()
@@ -219,8 +219,8 @@ i18n.setLocale = function setLocale(locale, refresh) {
  * @param  {String}     locale    the locale name
  * @return {Boolean}    True if it has, false otherwise
  */
-i18n.localeCached = function localeCached(locale) {
-  return (this._context[locale])
+i18n.isCached = function isCached(locale) {
+  return !(this._context[locale] === undefined)
 }
 
 /**
