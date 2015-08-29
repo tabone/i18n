@@ -88,7 +88,7 @@ app.use(i18n.init())
 
 app.get('/', function(req, res) {
   i18n.setLocale('en')
-  console.log(i18n.__('common.logo'))            // 'i18n-light'
+  console.log(i18n.__('common.logo'))          // 'i18n-light'
   console.log(i18n.__('home.logout'))          // 'Logout'
   console.log(i18n.__('home.loggedin', 'Tom')) // 'Hello Tom'
   console.log(i18n.__('home.messages', 2))     // '2 messages'
@@ -96,7 +96,7 @@ app.get('/', function(req, res) {
 
 app.get('/it', function(req, res) {
   i18n.setLocale('it')
-  console.log(i18n.__('common.logo'))            // Will fallback to en -> 'i18n-light'
+  console.log(i18n.__('common.logo'))          // Will fallback to en -> 'i18n-light'
   console.log(i18n.__('home.logout'))          // 'Esci'
   console.log(i18n.__('home.loggedin', 'Tom')) // 'Ciao Tom'
   console.log(i18n.__('home.messages', 2))     // '2 messaggi'
@@ -281,7 +281,67 @@ i18n.isCached('it') // => true
 ```
 
 ### __(path[,arg1 [,arg2[,..]]])
+Method used by `i18n-light` to convert `path` to the localized phrase within the current `dictionary context` of the current locale (or default locale if path is invalid and `fallback` === true).
+
+This method makes use of [sprintf-js](https://www.npmjs.com/package/sprintf-js), enabling you to include placeholders in your `dictionary` phrases (see example).
+
+Note that if `path` is not resolvable `i18n-light` will return the path itself.
+
+#### Dictionary
+```javascript
+{
+  "home": {
+    "login": "Login",
+    "welcome": "Welcome %s"
+  }
+}
+```
+
+#### Code
+```javascript
+...
+i18n.__('home.login')           // 'Login'
+i18n.__('home.welcome', 'Tom')  // 'Welcome Tom'
+...
+```
+
 ### __n(path[,arg1 [,arg2[,..]]], count)
+Method used by `i18n-light` to convert `path` to a quantitative localized phrase within the current `dictionary context` of the current locale (or default locale if path is invalid and `fallback` === true).
+
+This method makes use of [sprintf-js](https://www.npmjs.com/package/sprintf-js), enabling you to include placeholders in your `dictionary` phrases (see example).
+
+Note that if `path` is not resolvable `i18n-light` will return the path itself.
+
+Also note that the last argument (`count`) is used only by `i18n-light` and not by `sprintf-js`.
+
+If `count === 0` or is a `String` it will append `.zero` to `path`.
+
+If `count === 1` it will append `.one` to `path`.
+
+If `count > 1` it will append `.many` to `path`.
+
+#### Dictionary
+```javascript
+{
+  "home": {
+    "messages": {
+      "zero": "No messages",
+      "one": "1 message",
+      "many": "%s messages"
+    }
+  }
+}
+```
+
+#### Code
+```javascript
+...
+i18n.__n('home.messages', 0)      // 'No messages'
+i18n.__n('home.messages', 1)      // '1 Message'
+i18n.__n('home.messages', 3)      // 'undefined messages'
+i18n.__n('home.messages', 3, 3)   // '3 messages'
+...
+```
 
 ## Browserify
 Intead of using the `dir` option to point to the dictionaries directory, you have the possibility to inject your own `dictionary context`s during the configuration of `i18n-light` instance using `context` option. As already stated, in order for `i18n-light` to use the `context` option, the `dir` option needs to be omitted.
