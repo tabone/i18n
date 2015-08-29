@@ -498,6 +498,91 @@ describe('i18n-light module', function() {
     })
   })
 
+  describe('__', function() {
+    var context = {}
+    beforeEach(function() {
+      i18n.configure(opts)
+      var localeDir = path.join(__dirname, 'locale')
+      context.en = JSON.parse(fs.readFileSync(localeDir + '/en.js', 'utf-8'))
+    })
+
+    describe('with no sprintf parameters', function() {
+      it('should return the localized phrase', function() {
+        assert(i18n.__('greetings.text.hello')
+          === context.en.greetings.text.hello)
+      })
+    })
+
+    describe('with sprintf parameters', function() {
+      msg = 'should return the localized phrase with the placeholders'
+      it(msg, function() {
+        var name = 'Tom'
+        assert(i18n.__('greetings.text.welcome', name)
+            === context.en.greetings.text.welcome.replace('%s', name))
+      })
+    })
+  })
+
+  describe('__n', function() {
+    var tranPath = ''
+    beforeEach(function() {
+      i18n.configure(opts)
+      tranPath = 'this.is.a.path'
+    })
+
+    describe('when last argument is not a number', function() {
+      it('should append \'.zero\' to the path', function() {
+        assert(!!~i18n.__n(tranPath).indexOf('.zero'))
+      })
+    })
+
+    describe('when last argument is a number', function() {
+      describe('when last argument is 0', function() {
+        it('should append \'.zero\' to the path', function() {
+          assert(!!~i18n.__n(tranPath, 0).indexOf('.zero'))
+        })
+      })
+
+      describe('when last argument is 1', function() {
+        it('should append \'.one\' to the path', function() {
+          assert(!!~i18n.__n(tranPath, 1).indexOf('.one'))
+        })
+      })
+
+      describe('when last argument > 1', function() {
+        it('should append \'.many\' to the path', function() {
+          assert(!!~i18n.__n(tranPath, 5).indexOf('.many'))
+        })
+      })
+    })
+
+    describe('sprintf', function() {
+      var context = {}
+      var sfparam = 2
+      var i18nCount = 3
+      beforeEach(function() {
+        sfparam = 2
+        i18nCount = 3
+        var localeDir = path.join(__dirname, 'locale')
+        context.en = JSON.parse(fs.readFileSync(localeDir + '/en.js', 'utf-8'))
+      })
+
+      describe('when only path and count are given', function() {
+        it('should not use count as a sprintf param.', function () {
+          assert(i18n.__n('messages', i18nCount) !== (sfparam + ' messages'))
+        })
+      })
+
+      msg = 'when path, count and sprintf params are given'
+      describe(msg, function() {
+        it('should use them as intended', function () {
+          assert(i18n.__n('messages', sfparam, i18nCount)
+            === (sfparam + ' messages'))
+        })
+      })
+    })
+  })
+
   describe('_translate', function() {
     var context = {}
 
@@ -512,6 +597,22 @@ describe('i18n-light module', function() {
       context = {}
     })
 
+    describe('when fallback === true', function() {
+      describe('when path is valid in current locale', function() {
+
+      })
+
+      describe('when path is invalid in current locale', function() {
+
+      })
+    })
+
+    describe('when fallback === false', function() {
+      
+    })
+
+
+
     describe('when path is valid', function() {
       it('should return localized phrase', function() {
         var phrase = 'greetings.text.hello'
@@ -519,7 +620,15 @@ describe('i18n-light module', function() {
       })
     })
 
-    describe('when path is invalid because', function() {
+    describe('when path is invalid and', function() {
+
+      describe('fallback === true', function() {
+
+      })
+
+      describe('fallback === false', function() {
+
+      })
       describe('it doesn\'t exist', function() {
         it('doesn\'t exist for all locales', function() {
           var phrase = 'no.exist'
@@ -539,10 +648,6 @@ describe('i18n-light module', function() {
       it('is long', function() {
         var phrase = 'greetings.text.hello.woops'
         assert(i18n.__(phrase) === phrase)
-      })
-
-      it('f', function() {
-        console.log(i18n.__n('messages', 3))
       })
     })
   })
