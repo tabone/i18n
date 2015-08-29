@@ -1,14 +1,14 @@
-module.exports = {
-  'greetings': {
-    'text': {
-      'hello': 'hi',
-      'welcome': 'Welcole %s'
+{
+  "greetings": {
+    "text": {
+      "hello": "hi",
+      "welcome": "Welcole %s"
     },
-    'bye': 'bye'
+    "bye": "bye"
   },
-  'messages': {
-    'zero': 'No messages',
-    'one': '1 message',
-    'many': '%s messages'
+  "messages": {
+    "zero": "No messages",
+    "one": "1 message",
+    "many": "%s messages"
   }
 }

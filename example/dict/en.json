@@ -1,0 +1,14 @@
+{
+  "common": {
+    "logo": "i18n-light"
+  },
+  "home": {
+    "logout": "Logout",
+    "loggedin": "Hello %s",
+    "messages": {
+      "zero": "No messages",
+      "one": "1 message",
+      "many": "%s messages"
+    }
+  }
+}

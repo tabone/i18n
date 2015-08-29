@@ -1,7 +1,10 @@
-module.exports = {
-  'greetings': {
-    'text': {
-      'hello': 'ciao'
+{
+  "greetings": {
+    "text": {
+      "hello": "ciao"
+    },
+    "bye": {
+      "logout": "logout"
     }
   }
 }

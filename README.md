@@ -1,124 +1,350 @@
-[![Build Status](https://travis-ci.org/tabone/i18n.svg?branch=master)](https://travis-ci.org/tabone/i18n)
+# i18n-light
 
-# Installation
+## Installation
 
-    npm install --save i18n-light
+```bash
+npm install --save i18n-light
+```
 
-# Usage
+## Motiviation
+My main motivation in developing `i18n-light` was to create a localization module which enabled a developer to use the same storage (`dictionaries`) for both `Back-end` and `Front-end` code, thus having localized phrases more consistent and organized.
+
+## Vocabulary
+| Name | Description |
+|------|-------------|
+| `Dictionary` | A `JSON file` which `i18n-light` will use for localization. |
+| `Dicionary Contexts` | Is the `JSON` of a locale. This reside within a `dictionary` and is this `Object` which `i18n-light` will be using for localization. |
+| `Dictionary Path` | Is the path which i18n-light need to travel through the `dictionary context`. |
+| `Locale` | A name for a dictionary. |
+
+## Usage
+### Structure
+```
+  app
+  ├── dict/
+  |   ├── en.json
+  |   └── it.json
+  └── server.js
+```
+
+### Dictionaries
+#### dict/en.json
 
 ```javascript
-var express = require('express')
-  , path = require('path')
-  , i18n = require('i18n-light')
-  , app = module.exports = express()
+{
+  "common": {
+    "logo": "i18n-light"
+  },
+  "home": {
+    "logout": "Logout",
+    "loggedin": "Hello %s",
+    "messages": {
+      "zero": "No messages",
+      "one": "1 message",
+      "many": "%s messages"
+    }
+  }
+}
+```
+#### dict/it.json
+
+```javascript
+{
+  "home": {
+    "logout": "Esci",
+    "loggedin": "Ciao %s",
+    "messages": {
+      "zero": "0 messaggi",
+      "one": "1 messaggio",
+      "many": "%s messaggi"
+    }
+  }
+}
+```
+
+### Basic Example
+
+```javascript
+var i18n = require('i18n-light')
 
 i18n.configure({
   defaultLocale: 'en',
-  dir: path.join(__dirname, 'locale'),
-  fallback: true
+  dir: path.join(__dirname, 'dict'),
+  extension: '.json'
+})
+```
+
+### Express Example
+
+```javascript
+var express = require('express')
+  , app = express()
+  , i18n = require('i18n-light')
+
+...
+
+i18n.configure({
+  dir: path.join(__dirname, 'dict'),
+  defaultLocale: 'en',
+  fallback: true,
+  cache: true,
+  extension: 'json',
+  refresh: false
 })
 
 app.use(i18n.init())
 
 app.get('/', function(req, res) {
-  res.i18n.__('hello')
+  i18n.setLocale('en')
+  console.log(i18n.__('common.logo'))          // => 'i18n-light'
+  console.log(i18n.__('home.logout'))          // => 'Logout'
+  console.log(i18n.__('home.loggedin', 'Tom')) // => 'Hello Tom'
+  console.log(i18n.__('home.messages', 2))     // => '2 messages'
 })
 
-app.get('/italian', function(req, res) {
-  res.setLocale('it')
-  res.i18n.__('hello')
+app.get('/it', function(req, res) {
+  i18n.setLocale('it')
+  console.log(i18n.__('common.logo'))          // Will fallback to en => 'i18n-light'
+  console.log(i18n.__('home.logout'))          // => 'Esci'
+  console.log(i18n.__('home.loggedin', 'Tom')) // => 'Ciao Tom'
+  console.log(i18n.__('home.messages', 2))     // => '2 messaggi'
 })
+
+...
 
 require('http').createServer(app).listen(8080)
 ```
 
-## Middleware Integration
+### Views Example
 
-### .configure
-As one can see the only configurations which `i18n-light` needs are three things:
+```html
+...
+<body>
+  <span><%=i18n.__('common.logo')%></span> <!-- i18n-light -->
+</body>
+...
+```
 
-| Config Keyword | Type | Description |
-|----------------|------|-------------|
-| `defaultLocale` | String | The locale which will be considered as current locale when i18n is configured. This is also the locale which will be used as a fallback for any keywords which are not found in the dictionary locale being used. |
-| `dir` | String | This is the directory where `i18n-light` will look for locale specific dictionaries. |
-| `context` | Object | Instead of using `dir` to inject dictionaries, you can pass the dictionaries through the `context`. `i18n-light` will only look for this attribute if `dir` isn't specified. More information below. |
-| `fallback` | Boolean  | Indicates whether to use the default locale as a fallback when a keyword is missing. |
+## Options
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `defaultLocale` | `String` | `Required` | The locale which `i18-light` will fallback if a `dictionary path` isn't resolvable in the current dictionary. |
+| `dir` | `String` | N/A | The directory path where the `dictionaries` will reside. |
+| `context` | `Object` | N/A | Instead of using `dir` to instruct `i18n-light` from where to retrieve the dictionaries, you can pass `dictionaries` directly through the `context`. Note: `i18n-light` will only look for this attribute if dir isn't specified. More information below. |
+| `fallback` | `Boolean` | `true` | Indicates whether `i18n-light` should fallback to the `defaultLocale` `dictionary context` if the path is invalid in the `dictionary context` of the current locale. |
+| `refresh` | `Boolean` | `false` | Indicates whether `i18n-light` should retrieve an update of the `dictionary context` (`true`) or keep using what is already cached (`false`). |
+| `cache` | `Boolean` | `true` | Indicates whether `i18n-light` should cache `dictionary context`s (`true`) or not (`false`). |
+| `extension` | `String` | `.js` | The `extension` of the `dictionary` files. |
 
-## .init()
-This is where `i18n-light` merges with Expressjs. Here a the `i18n-light` instance just configured is placed inside `response` object and is accessible from `res.i18n`. In addition to this it is also placed inside the `response.locals` object, making `i18n-light` accessibile from your views.
+## API
+### configure(opts)
+Method used to configure (initiate) an instance of `i18n-light`. Take a look at the [options section](#options) to understand what options it accepts.
 
-## Methods
-### i18n.setLocale(locale)
-Method used to change the current locale.
+```javascript
+...
+i18n.configure({
+  dir: path.join(__dirname, 'dict'),
+  defaultLocale: 'en',
+  fallback: true
+})
+...
+```
 
-### i18n.getLocale()
-Method used to get the current locale.
+### init()
+Middleware method. This is the method used to integrate `i18n-light` instance to `Express`. Take a look at the [usage section](#usage) example to see how this can be easily done. This method makes your `i18n-light` instance accessible from:
 
-### i18n.resetLocale()
-Method used to reset the current locale back to the default locale.
+1. `res.i18n`
+2. `res.locals.i18n` - making your instances accessible from your views.
 
-### i18n.__(path[,arg1 [,arg2[,..]]])
+```javascript
+...
+app.use(i18n.init())
+...
+```
+
+### resetLocale([refresh])
+Method used to reset the current locale to the default one. It has an optional parameter `refresh` which when its `true` `i18n-light` updates the dictionary context of the default locale.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en'
+  ...
+})
+...
+i18n.setLocale('it')  //default locale is now 'it'
+...
+i18n.resetLocale()  //default locale is now 'en'
+```
+
+### setLocale(locale[, refresh])
+Method used to change the current locale of your `i18n-light` instance to `locale`. It has an `optional` argument `refresh` which when its `true`, `i18n-light` updates the dictionary context of `locale`.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en'
+  ...
+})
+...
+i18n.setLocale('it')  //default locale is now 'it'
+```
+
+### getLocale()
+Method used to get the name of the current locale.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en'
+  ...
+})
+...
+i18n.getLocale()  // => en
+...
+i18n.setLocale('it')
+...
+i18n.getLocale()  // => it
+```
+
+### isCached(locale)
+Method used to check whether a `dictionary context` of `locale` is cached or not.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en'
+  ...
+})
+...
+i18n.isCached('en')  // => true
+...
+i18n.isCached('it')  // => false
+...
+i18n.setLocale('it')
+...
+i18n.isCached('it')  // => true
+```
+
+### setDefaultLocale(locale)
+Method used to change the default locale of your `i18n-light` instance to `locale`.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en'
+  ...
+})
+...
+i18n.getLocale()              // => en
+...
+i18n.setDefaultLocale('it')   // => true
+...
+i18n.getLocale('it')          // => it
+```
+
+### refreshContext([locale])
+Method used to refresh the `dictionary context` of `locale`.
+
+### clearCache([refresh])
+Method used to clear the cache of your `i18n-light` instance.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en'
+  ...
+})
+...
+i18n.setLocale('it')    // => en
+...
+i18n.isCached('en')     // => true
+i18n.isCached('it')     // => true
+...
+i18n.clearCache()
+...
+i18n.isCached('en')     // => false
+i18n.isCached('it')     // => false
+```
+
+It has an `optional` argument `refresh` which when its true, `i18n-light` refreshes the `dictionary context` of the current locale.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en'
+  ...
+})
+...
+i18n.setLocale('it')    // => en
+...
+i18n.isCached('en')     // => true
+i18n.isCached('it')     // => true
+...
+i18n.clearCache(true)
+...
+i18n.isCached('en')     // => false
+i18n.isCached('it')     // => true
+```
+
+### __(path[,arg1 [,arg2[,..]]])
+Method used by `i18n-light` to convert `path` to the localized phrase within the current `dictionary context` of the current locale (or default locale if path is invalid and `fallback` === true).
+
+This method makes use of [sprintf-js](https://www.npmjs.com/package/sprintf-js), enabling you to include placeholders in your `dictionary` phrases (see example).
+
+Note that if `path` is not resolvable `i18n-light` will return the path itself.
 
 #### Dictionary
 ```javascript
-module.exports = {
-  "greetings": {
-    "hello": "hello $s"
-  }
-}
-```
-
-#### EJS Template
-```javascript
-<%= i18n.__('hello', 'node')%>    //will output 'hello node'
-```
-### i18n.__n(path[,arg1 [,arg2[,..]]], count)
-
-#### Dictionary
-```javascript
-module.exports = {
-  "messages": {
-    "zero": "no messages",
-    "one": "one message",
-    "many": "%d messages"
-  }
-}
-```
-
-#### EJS Template
-```javascript
-<%= i18n.__n('messages', 0) %>        //Will output 'no messages'
-<%= i18n.__n('messages', 1) %>        //Will output 'one message'
-<%= i18n.__n('messages', 5, 5) %>     //Will output '5 messages'
-```
-
-## Dictionaries
-Dictionaries are just simple Node modules which exports JSON. It is important to name your dictionary the same as the locale. For example for locale `en`, the dictionary shall be named `en.js`.
-
-```javascript
-module.exports = {
-  "greetings": {
-    "hello": "hello"
-  }
-}
-```
-
-## Dictionaries Through `context` Config.
-Intead of using the `dir` attribute to point to the dictionaries directory, you have the possibility to inject your own dictionaries during the configuration. As already stated, in order for `i18n-light` to use the `context` config you must not provide the `dir` config.
-
-Example of context object:
-```javascript  
 {
-  "en": {
-    "greetings": "hi"
-  },
-  "it": {
-    "greetings": "ciao"
+  "home": {
+    "login": "Login",
+    "welcome": "Welcome %s"
   }
 }
 ```
 
-This feature makes this module more easy to integrate with `Browserify` on your client side.
+#### Code
+```javascript
+...
+i18n.__('home.login')           // => 'Login'
+i18n.__('home.welcome', 'Tom')  // => 'Welcome Tom'
+...
+```
+
+### __n(path[,arg1 [,arg2[,..]]], count)
+Method used by `i18n-light` to convert `path` to a quantitative localized phrase within the current `dictionary context` of the current locale (or default locale if path is invalid and `fallback` === true).
+
+This method makes use of [sprintf-js](https://www.npmjs.com/package/sprintf-js), enabling you to include placeholders in your `dictionary` phrases (see example).
+
+Note that if `path` is not resolvable `i18n-light` will return the path itself.
+
+Also note that the last argument (`count`) is used only by `i18n-light` and not by `sprintf-js`.
+
+If `count === 0` or is a `String` it will append `.zero` to `path`.
+
+If `count === 1` it will append `.one` to `path`.
+
+If `count > 1` it will append `.many` to `path`.
+
+#### Dictionary
+```javascript
+{
+  "home": {
+    "messages": {
+      "zero": "No messages",
+      "one": "1 message",
+      "many": "%s messages"
+    }
+  }
+}
+```
+
+#### Code
+```javascript
+...
+i18n.__n('home.messages', 0)      // => 'No messages'
+i18n.__n('home.messages', 1)      // => '1 Message'
+i18n.__n('home.messages', 3)      // => 'undefined messages'
+i18n.__n('home.messages', 3, 3)   // => '3 messages'
+...
+```
+
+## Browserify
+Intead of using the `dir` option to point to the dictionaries directory, you have the possibility to inject your own `dictionary context`s during the configuration of `i18n-light` instance using `context` option. As already stated, in order for `i18n-light` to use the `context` option, the `dir` option needs to be omitted.
 
 ```javascript
 var i18n = require('i18n-light');
@@ -131,3 +357,5 @@ i18n.configure({
   }
 })
 ```
+
+If your dictionaries are dynamic take a look at [bulk-require module](https://www.npmjs.com/package/bulk-require).
