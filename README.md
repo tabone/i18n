@@ -1,15 +1,73 @@
-#i18n-light
+# i18n-light
 
-##Installation
+## Installation
 
 ```bash
-npm install i18n-light
+npm install --save i18n-light
 ```
 
-##Motiviation
-My main motivation in developing `i18n-light` was to create a localization module which enabled a developer to use the same storage (mentioned as `dictionaries`) for both `Back-end` and `Front-end` code, thus making localized phrases more consistent and organized.
+## Motiviation
+My main motivation in developing `i18n-light` was to create a localization module which enabled a developer to use the same storage (`dictionaries`) for both `Back-end` and `Front-end` code, thus having localized phrases more consistent and organized.
 
-##Usage
+## Usage
+### Structure
+```
+  app
+  ├── dict/
+  |   ├── en.json
+  |   └── it.json
+  └── server.js
+```
+
+### Dictionaries
+#### dict/en.json
+
+```javascript
+{
+  "common": {
+    "logo": "i18n-light"
+  },
+  "home": {
+    "logout": "Logout",
+    "loggedin": "Hello %s",
+    "messages": {
+      "zero": "No messages",
+      "one": "1 message",
+      "many": "%s messages"
+    }
+  }
+}
+```
+#### dict/it.json
+
+```javascript
+{
+  "home": {
+    "logout": "Esci",
+    "loggedin": "Ciao %s",
+    "messages": {
+      "zero": "0 messaggi",
+      "one": "1 messaggio",
+      "many": "%s messaggi"
+    }
+  }
+}
+```
+
+### Basic Example
+
+```javascript
+var i18n = require('i18n-light')
+
+i18n.configure({
+  defaultLocale: 'en',
+  dir: path.join(__dirname, 'dict'),
+  extension: '.json'
+})
+```
+
+### Express Example
+
 ```javascript
 var express = require('express')
   , app = express()
@@ -30,17 +88,33 @@ app.use(i18n.init())
 
 app.get('/', function(req, res) {
   i18n.setLocale('en')
-  res.send(i18n.__('hello'))
+  console.log(i18n.__('common.logo'))            // 'i18n-light'
+  console.log(i18n.__('home.logout'))          // 'Logout'
+  console.log(i18n.__('home.loggedin', 'Tom')) // 'Hello Tom'
+  console.log(i18n.__('home.messages', 2))     // '2 messages'
 })
 
 app.get('/it', function(req, res) {
   i18n.setLocale('it')
-  res.send(i18n.__('hello'))
+  console.log(i18n.__('common.logo'))            // Will fallback to en -> 'i18n-light'
+  console.log(i18n.__('home.logout'))          // 'Esci'
+  console.log(i18n.__('home.loggedin', 'Tom')) // 'Ciao Tom'
+  console.log(i18n.__('home.messages', 2))     // '2 messaggi'
 })
 
 ...
 
 require('http').createServer(app).listen(8080)
+```
+
+### Views Example
+
+```html
+...
+<body>
+  <span><%=i18n.__('common.logo')%></span> <!-- i18n-light -->
+</body>
+...
 ```
 
 ## Vocabulary
@@ -77,7 +151,10 @@ i18n.configure({
 ```
 
 ### init()
-Middleware method. This is the method used to integrate `i18n-light` instance to `Express`. Take a look at the (usage section)[#usage] to see how this can be easily done.
+Middleware method. This is the method used to integrate `i18n-light` instance to `Express`. Take a look at the [usage section](#usage) example to see how this can be easily done. This method makes your `i18n-light` instance accessible from:
+
+1. `res.i18n`
+2. `res.locals.i18n` - making your instances accessible from your views.
 
 ```javascript
 ...
