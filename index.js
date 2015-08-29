@@ -108,6 +108,7 @@ i18n.configure = function configure(opts) {
   }
 
   this.resetLocale()
+  return this
 }
 
 /**
@@ -343,7 +344,7 @@ i18n.__n = function __n(path) {
     translating the quantitative phrase while using sprintf to include
     placeholders.
    */
-  var args = Array.prototype.slice.call(arguments, 1)
+  var args = Array.prototype.slice.call(arguments, 1, arguments.length - 1)
   return require('sprintf-js').vsprintf(this._translate(path), args)
 }
 
