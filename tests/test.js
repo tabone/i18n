@@ -34,6 +34,12 @@ describe('i18n-light module', function() {
   })
 
   describe('configure method', function() {
+    msg = 'should set the default locale as the current locale'
+    it(msg, function() {
+      i18n.configure(opts)
+      assert(i18n._currentLocale === opts.defaultLocale)
+    })
+
     msg = 'when required attributes are not provided should throw an error:'
     describe(msg, function() {
       it('\'defaultLocale\'.', function() {
@@ -221,7 +227,7 @@ describe('i18n-light module', function() {
               assert(i18n._context[locale] !== undefined)
             })
 
-            it('should include the current locale dictionary context', function() {
+            it('should updated locale dictionary context', function() {
               assert(i18n._context[locale] !== opts.context[locale])
             })
           })
@@ -260,7 +266,7 @@ describe('i18n-light module', function() {
               assert(i18n._context[locale] !== undefined)
             })
 
-            it('should include the current locale dictionary context', function() {
+            it('should updated locale dictionary context', function() {
               assert(i18n._context[locale] !== opts.context[locale])
             })
           })
@@ -305,7 +311,7 @@ describe('i18n-light module', function() {
               assert(i18n._context[locale] !== undefined)
             })
 
-            it('should include the current locale dictionary context', function() {
+            it('should updated locale dictionary context', function() {
               assert(i18n._context[locale] !== opts.context[locale])
             })
           })
@@ -344,7 +350,7 @@ describe('i18n-light module', function() {
               assert(i18n._context[locale] !== undefined)
             })
 
-            it('should include the current locale dictionary context', function() {
+            it('should updated locale dictionary context', function() {
               assert(i18n._context[locale] !== opts.context[locale])
             })
           })
@@ -416,7 +422,7 @@ describe('i18n-light module', function() {
       i18n.configure(opts)
     })
 
-    it('should change the \'currentLocale\' to the default one.', function() {
+    it('should clear the cached dictionaries.', function() {
       assert(Object.keys(i18n.clearCache()._context).length === 0)
     })
   })
@@ -587,67 +593,114 @@ describe('i18n-light module', function() {
     var context = {}
 
     beforeEach(function() {
-      i18n.configure(opts)
       var localeDir = path.join(__dirname, 'locale')
       context.en = JSON.parse(fs.readFileSync(localeDir + '/en.js', 'utf-8'))
       context.it = JSON.parse(fs.readFileSync(localeDir + '/it.js', 'utf-8'))
     })
 
-    afterEach(function() {
-      context = {}
-    })
-
     describe('when fallback === true', function() {
-      describe('when path is valid in current locale', function() {
-
+      beforeEach(function() {
+        opts.fallback = true
+        i18n.configure(opts)
+        i18n.setLocale('it')
       })
 
-      describe('when path is invalid in current locale', function() {
+      describe('and path is', function() {
+        describe('good', function() {
+          it('should return the localized phrase.', function() {
+            assert(i18n._translate('greetings.text.hello')
+              === context.it.greetings.text.hello)
+          })
+        })
 
+        describe('invalid', function() {
+          describe('for both current and default locale', function() {
+            it('should return the path.', function() {
+              var path = 'no.exist'
+              assert(i18n._translate(path) === path)
+            })
+          })
+
+          describe('for current locale', function() {
+            it('should return the phrase from default locale.', function() {
+              var path = 'messages.zero'
+              assert(i18n._translate(path)
+                === context.en.messages.zero)
+            })
+          })
+        })
+
+        describe('short', function() {
+          describe('for both current and default locale', function() {
+            it('should return the path.', function() {
+              var path = 'greetings'
+              assert(i18n._translate(path) === path)
+            })
+          })
+
+          describe('for current locale', function() {
+            it('should return the phrase from default locale.', function() {
+              var path = 'greetings.bye'
+              assert(i18n._translate(path)
+                === context.en.greetings.bye)
+            })
+          })
+        })
+
+        describe('long for current locale', function() {
+          describe('for both current and default locale', function() {
+            it('should return the path.', function() {
+              var path = 'no.exist'
+              assert(i18n._translate(path) === path)
+            })
+          })
+
+          describe('for current locale', function() {
+            it('should return the phrase from default locale.', function() {
+              var path = 'greetings.text.welcome'
+              assert(i18n._translate(path)
+                === context.en.greetings.text.welcome)
+            })
+          })
+        })
       })
     })
 
     describe('when fallback === false', function() {
-      
-    })
-
-
-
-    describe('when path is valid', function() {
-      it('should return localized phrase', function() {
-        var phrase = 'greetings.text.hello'
-        assert(i18n.__(phrase) === context.en.greetings.text.hello)
-      })
-    })
-
-    describe('when path is invalid and', function() {
-
-      describe('fallback === true', function() {
-
+      beforeEach(function() {
+        opts.fallback = false
+        i18n.configure(opts)
+        i18n.setLocale('it')
       })
 
-      describe('fallback === false', function() {
-
-      })
-      describe('it doesn\'t exist', function() {
-        it('doesn\'t exist for all locales', function() {
-          var phrase = 'no.exist'
-          assert(i18n.__(phrase) === phrase)
+      describe('and path is', function() {
+        describe('good', function() {
+          it('should return the localized phrase.', function() {
+            assert(i18n._translate('greetings.text.hello')
+              === context.it.greetings.text.hello)
+          })
         })
 
-        describe('exists for defaultLocale', function() {
-          beforeEach
+        describe('invalid for current locale', function() {
+          it('should return the path.', function() {
+            var path = 'no.exist'
+            assert(i18n._translate(path) === path)
+          })
         })
-      })
-      
-      it('is short', function() {
-        var phrase = 'greetings.text'
-        assert(i18n.__(phrase) === phrase)
-      })
-      
-      it('is long', function() {
-        var phrase = 'greetings.text.hello.woops'
-        assert(i18n.__(phrase) === phrase)
+
+        describe('short for current locale', function() {
+          it('should return the path.', function() {
+            var path = 'greetings.text'
+            assert(i18n._translate(path) === path)
+          })
+        })
+
+        describe('long for current locale', function() {
+          it('should return the path.', function() {
+            var path = 'greetings.text.hello.woops'
+            assert(i18n._translate(path) === path)
+          })
+        })
       })
     })
   })
