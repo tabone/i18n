@@ -9,6 +9,14 @@ npm install --save i18n-light
 ## Motiviation
 My main motivation in developing `i18n-light` was to create a localization module which enabled a developer to use the same storage (`dictionaries`) for both `Back-end` and `Front-end` code, thus having localized phrases more consistent and organized.
 
+## Vocabulary
+| Name | Description |
+|------|-------------|
+| `Dictionary` | A `JSON file` which `i18n-light` will use for localization. |
+| `Dicionary Contexts` | Is the `JSON` of a locale. This reside within a `dictionary` and is this `Object` which `i18n-light` will be using for localization. |
+| `Dictionary Path` | Is the path which i18n-light need to travel through the `dictionary context`. |
+| `Locale` | A name for a dictionary. |
+
 ## Usage
 ### Structure
 ```
@@ -88,18 +96,18 @@ app.use(i18n.init())
 
 app.get('/', function(req, res) {
   i18n.setLocale('en')
-  console.log(i18n.__('common.logo'))          // 'i18n-light'
-  console.log(i18n.__('home.logout'))          // 'Logout'
-  console.log(i18n.__('home.loggedin', 'Tom')) // 'Hello Tom'
-  console.log(i18n.__('home.messages', 2))     // '2 messages'
+  console.log(i18n.__('common.logo'))          // => 'i18n-light'
+  console.log(i18n.__('home.logout'))          // => 'Logout'
+  console.log(i18n.__('home.loggedin', 'Tom')) // => 'Hello Tom'
+  console.log(i18n.__('home.messages', 2))     // => '2 messages'
 })
 
 app.get('/it', function(req, res) {
   i18n.setLocale('it')
-  console.log(i18n.__('common.logo'))          // Will fallback to en -> 'i18n-light'
-  console.log(i18n.__('home.logout'))          // 'Esci'
-  console.log(i18n.__('home.loggedin', 'Tom')) // 'Ciao Tom'
-  console.log(i18n.__('home.messages', 2))     // '2 messaggi'
+  console.log(i18n.__('common.logo'))          // Will fallback to en => 'i18n-light'
+  console.log(i18n.__('home.logout'))          // => 'Esci'
+  console.log(i18n.__('home.loggedin', 'Tom')) // => 'Ciao Tom'
+  console.log(i18n.__('home.messages', 2))     // => '2 messaggi'
 })
 
 ...
@@ -116,14 +124,6 @@ require('http').createServer(app).listen(8080)
 </body>
 ...
 ```
-
-## Vocabulary
-| Name | Description |
-|------|-------------|
-| `Dictionary` | A `JSON file` which `i18n-light` will use for localization. |
-| `Dicionary Contexts` | Is the `JSON` of a locale. This reside within a `dictionary` and is this `Object` which `i18n-light` will be using for localization. |
-| `Dictionary Path` | Is the path which i18n-light need to travel through the `dictionary context`. |
-| `Locale` | A name for a dictionary. |
 
 ## Options
 | Name | Type | Default | Description |
@@ -252,13 +252,13 @@ i18n.configure({
 ...
 i18n.setLocale('it')    // => en
 ...
-i18n.isCached('en') // => true
-i18n.isCached('it') // => true
+i18n.isCached('en')     // => true
+i18n.isCached('it')     // => true
 ...
 i18n.clearCache()
 ...
-i18n.isCached('en') // => false
-i18n.isCached('it') // => false
+i18n.isCached('en')     // => false
+i18n.isCached('it')     // => false
 ```
 
 It has an `optional` argument `refresh` which when its true, `i18n-light` refreshes the `dictionary context` of the current locale.
@@ -271,13 +271,13 @@ i18n.configure({
 ...
 i18n.setLocale('it')    // => en
 ...
-i18n.isCached('en') // => true
-i18n.isCached('it') // => true
+i18n.isCached('en')     // => true
+i18n.isCached('it')     // => true
 ...
 i18n.clearCache(true)
 ...
-i18n.isCached('en') // => false
-i18n.isCached('it') // => true
+i18n.isCached('en')     // => false
+i18n.isCached('it')     // => true
 ```
 
 ### __(path[,arg1 [,arg2[,..]]])
@@ -300,8 +300,8 @@ Note that if `path` is not resolvable `i18n-light` will return the path itself.
 #### Code
 ```javascript
 ...
-i18n.__('home.login')           // 'Login'
-i18n.__('home.welcome', 'Tom')  // 'Welcome Tom'
+i18n.__('home.login')           // => 'Login'
+i18n.__('home.welcome', 'Tom')  // => 'Welcome Tom'
 ...
 ```
 
@@ -336,10 +336,10 @@ If `count > 1` it will append `.many` to `path`.
 #### Code
 ```javascript
 ...
-i18n.__n('home.messages', 0)      // 'No messages'
-i18n.__n('home.messages', 1)      // '1 Message'
-i18n.__n('home.messages', 3)      // 'undefined messages'
-i18n.__n('home.messages', 3, 3)   // '3 messages'
+i18n.__n('home.messages', 0)      // => 'No messages'
+i18n.__n('home.messages', 1)      // => '1 Message'
+i18n.__n('home.messages', 3)      // => 'undefined messages'
+i18n.__n('home.messages', 3, 3)   // => '3 messages'
 ...
 ```
 
