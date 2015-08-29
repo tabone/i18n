@@ -84,7 +84,7 @@ i18n.configure = function configure(opts) {
   this._cache = (opts.cache !== undefined)
     ? opts.cache : this._cache
 
-  this._refresh = (opts.refresh)
+  this._refresh = (opts.refresh !== undefined)
     ? opts.refresh : this._refresh
 
   this._extension
