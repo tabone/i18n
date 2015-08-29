@@ -375,7 +375,7 @@ i18n._translate = function _translate(path, def) {
     this.refreshContext(this.locale)
 
   /**
-   * the dictionary contextx of the locale i18n-light will be using for
+   * the dictionary context of the locale, i18n-light will be using for
    * the translation.
    * @type {Object}
    */
@@ -386,7 +386,6 @@ i18n._translate = function _translate(path, def) {
    * @type {Array[String]}
    */
   var pathArr = path.split('.')
-
   /*
     i18n-light will be looping through each node of the path given and
     while traversing the dictionary context of the current or default
@@ -399,41 +398,47 @@ i18n._translate = function _translate(path, def) {
      */
     var node = pathArr[i]
 
-    if(obj[node] !== undefined) {
-      if(typeof obj[node] !== 'object') {
-        /*
-          if the value of the key in the dictionary context is not of type
-          object, it means that it is the end of the dictionary context thus,
-          it should also be the end of the path. if this is valid the
-          'localized string' is returned however if the path is longer, it
-          means that the path is invalid and therefore the 'path' should be
-          returned.
-         */
-        if(i < (pathArr.length - 1)) break
+    /**
+     * indicates whether it is the last loop or not. if so we will be
+     * expecting that typeof node === 'string'
+     * @type {Boolean}
+     */
+    var last = (i === (pathArr.length - 1))
+
+    /**
+     * indicates whether 'node' is valid or not. a 'node' is valid if:
+     *   1. it exists as a key inside 'obj'.
+     *   2. it should be an object if it isn't in the last loop.
+     *   3. it shouldn't be an object if it is at the last loop.
+     * @type {Boolean}
+     */
+    var valid = (obj[node] !== undefined)
+      && ((typeof obj[node] === 'object' && !(last))
+        || (typeof obj[node] !== 'object' && last))
+
+    if(valid) {
+      /*
+        the next thing to do is to determine whether we should return the
+        localized string (if we are at the last loop) or setup the 'obj' for
+        the next loop (preparing it for 'i18n-light' journey in finding the
+        phrase).
+       */
+      if(last) {
         path = obj[node]
       } else {
-        /*
-          if the value of the key in the dictionary context is of type
-          object, it means that it isn't the end of the dictionary contest, thus
-          the path should have more nodes.
-         */
-        if(i === (pathArr.length - 1)) break
         obj = obj[node]
       }
     } else if((locale !== this._defaultLocale) && this._fallback) {
       /*
-        if i18n-light has failed to find a key in the dictionary context of
-        the locale currently being traversed, i18n-light is able to fallback
-        on the default locale. obviously it only does this if:
+        if 'node' doesn't cater for all the rules mentioned above, i18n-light
+        will try the path on the default locale if:
           1. the current locale being traversed is not the default locale
              (since it will cause an infinite loop o.o) and
           2. the user has chosen to make use of this functionality by passing
               fallback = true.
        */
-      this._translate(path, true)
-      //stop the loop!
-      break
-    }
+      path = this._translate(path, true)
+    } else break
   }
   return path
 }
