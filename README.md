@@ -348,14 +348,17 @@ i18n.__n('home.messages', 3, 3)   // => '3 messages'
 ## Browserify
 Intead of using the `dir` option to point to the dictionaries directory, you have the possibility to inject your own `dictionary context`s during the configuration of `i18n-light` instance using `context` option. As already stated, in order for `i18n-light` to use the `context` option, the `dir` option needs to be omitted.
 
+The following example shows how can this be done using [brfs](https://www.npmjs.com/package/brfs) for `browserify`.
+
 ```javascript
 var i18n = require('i18n-light');
 
 i18n.configure({
   defaultLocale: document.documentElement.lang,
-  context: {
-    'en': require('./locale/en'),
-    'it': require('./locale/it')
-  }
+  context: { 'en': JSON.parse(require('fs')
+                      .readFileSync('en.js', 'utf-8'))
+            , 'it': JSON.parse(require('fs')
+                      .readFileSync('it.js', 'utf-8'))
+            }
 })
 ```
