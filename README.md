@@ -359,5 +359,3 @@ i18n.configure({
   }
 })
 ```
-
-If your dictionaries are dynamic take a look at [bulk-require module](https://www.npmjs.com/package/bulk-require).
