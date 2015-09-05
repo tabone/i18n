@@ -137,7 +137,7 @@ require('http').createServer(app).listen(8080)
 | `refresh` | `Boolean` | `false` | Indicates whether `i18n-light` should retrieve an update of the `dictionary context` (`true`) or keep using what is already cached (`false`). |
 | `cache` | `Boolean` | `true` | Indicates whether `i18n-light` should cache `dictionary context`s (`true`) or not (`false`). |
 | `extension` | `String` | `.js` | The `extension` of the `dictionary` files. |
-| `resolve` | `Function` | `null` | Instead of using `dir` or `context` you can use this function to code your own resolver for your `dictionary` files. Note that `i18n-light` will only use this function if your `i18n-light` instance is not configured using either `context` or `dir`. More info on how to use [here](#Using-your-own-Resolver)|
+| `resolve` | `Function` | `null` | Instead of using `dir` or `context` you can use this function to code your own resolver for your `dictionary` files. Note that `i18n-light` will only use this function if your `i18n-light` instance is not configured using either `context` or `dir`. More info on how to use [here](#using-your-own-resolver)|
 
 ## API
 ### configure(opts)
