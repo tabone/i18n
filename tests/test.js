@@ -24,7 +24,10 @@ describe('i18n-light module', function() {
         it: {
           'greetings': 'ciao'
         }
-      }
+      },
+      resolve: function(locale) {
+        return {data: 'JSON from a resolve.'}
+      },
     }
   })
 
@@ -52,6 +55,7 @@ describe('i18n-light module', function() {
       it('\'dir\' and \'context\'.', function() {
         delete opts.dir
         delete opts.context
+        delete opts.resolve
         assert.throws(function() {
           i18n.configure(opts)
         }, Error, /dir/)
@@ -103,6 +107,34 @@ describe('i18n-light module', function() {
       describe('if \'dir\' is not omitted', function() {
         it('shouldn\'t be assigned', function() {
           assert(i18n._context !== opts.context)
+        })
+      })
+    })
+
+    describe('resolve attribute', function() {
+      describe('if \'dir\' and context are omitted', function() {
+        beforeEach(function() {
+          delete opts.dir
+          delete opts.context
+          i18n.configure(opts)
+        })
+        it('should be assigned', function() {
+          assert(i18n._resolve === opts.resolve)
+        })
+      })
+
+      describe('if \'dir\' is not omitted', function() {
+        it('shouldn\'t be assigned', function() {
+          assert(i18n._resolve !== opts.resolve)
+        })
+      })
+
+      describe('if \'context\' is not omitted', function() {
+        beforeEach(function() {
+          delete opts.dir
+        })
+        it('shouldn\'t be assigned', function() {
+          assert(i18n._resolve !== opts.resolve)
         })
       })
     })
@@ -433,27 +465,57 @@ describe('i18n-light module', function() {
       it: 'test 2'
     }
 
-    beforeEach(function() {
-      opts.defaultLocale = 'en'
-      i18n.configure(opts)
-      i18n._context = JSON.parse(JSON.stringify(testContext))
-    })
+    describe('common functionality', function() {
+      beforeEach(function() {
+        opts.defaultLocale = 'en'
+        i18n.configure(opts)
+        i18n._context = JSON.parse(JSON.stringify(testContext))
+      })
 
-    describe('no arguments', function() {
-      msg = 'should refresh the dictionary context of current locale.'
-      it(msg, function() {
-        assert(i18n.refreshContext()._context.en !== testContext.en)
+      describe('no arguments', function() {
+        msg = 'should refresh the dictionary context of current locale.'
+        it(msg, function() {
+          assert(i18n.refreshContext()._context.en !== testContext.en)
+        })
+      })
+
+      describe('with arguments', function() {
+        msg = 'should refresh the dictionary context of the locale passed '
+          + 'as an argument'
+        it(msg, function() {
+          assert(i18n.refreshContext('it')._context.it !== testContext.it)
+        })
       })
     })
 
-    describe('with arguments', function() {
+    describe('using \'dir\' attribute', function() {
+      beforeEach(function() {
+        opts.defaultLocale = 'en'
+        i18n.configure(opts)
+      })
+
       msg = 'should refresh the dictionary context of the locale passed '
         + 'as an argument'
       it(msg, function() {
         assert(i18n.refreshContext('it')._context.it !== testContext.it)
       })
     })
-    
+
+    describe('using \'resolve\' functionality', function() {
+      beforeEach(function() {
+        delete opts.dir
+        delete opts.context
+        opts.defaultLocale = 'en'
+        i18n.configure(opts)
+        i18n._context = JSON.parse(JSON.stringify(testContext))
+      })
+
+      msg = 'should refresh the dictionary context of the locale passed '
+        + 'to use the JSON returned from resolve function.'
+      it(msg, function() {
+        assert(i18n.refreshContext('it')._context.it !== i18n._resolve('it'))
+      })
+    })
   })
 
   describe('isCached', function() {
