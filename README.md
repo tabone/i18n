@@ -346,7 +346,7 @@ i18n.__n('home.messages', 3, 3)   // => '3 messages'
 ...
 ```
 
-##Using your own Resolver
+## Using your own Resolver
 As already mentioned in the [options](#options) section, `i18n-light` will only use this functionality if it hasn't been configured with `dir` or `context` options. When a context of a locale is needed, `i18n-light` will call this function with the locale name passed as the parameter. This function should then return a `dictionary context` in the form of a JSON.
 
 ```javascript
