@@ -137,6 +137,7 @@ require('http').createServer(app).listen(8080)
 | `refresh` | `Boolean` | `false` | Indicates whether `i18n-light` should retrieve an update of the `dictionary context` (`true`) or keep using what is already cached (`false`). |
 | `cache` | `Boolean` | `true` | Indicates whether `i18n-light` should cache `dictionary context`s (`true`) or not (`false`). |
 | `extension` | `String` | `.js` | The `extension` of the `dictionary` files. |
+| `resolve` | `Function` | `null` | Instead of using `dir` or `context` you can use this function to code your own resolver for your `dictionary` files. Note that `i18n-light` will only use this function if your `i18n-light` instance is not configured using either `context` or `dir`. More info on how to use [here](#Using-your-own-Resolver)|
 
 ## API
 ### configure(opts)
@@ -343,6 +344,27 @@ i18n.__n('home.messages', 1)      // => '1 Message'
 i18n.__n('home.messages', 3)      // => 'undefined messages'
 i18n.__n('home.messages', 3, 3)   // => '3 messages'
 ...
+```
+
+##Using your own Resolver
+As already mentioned in the [options](#options) section, `i18n-light` will only use this functionality if it hasn't been configured with `dir` or `context` options. When a context of a locale is needed, `i18n-light` will call this function with the locale name passed as the parameter. This function should then return a `dictionary context` in the form of a JSON.
+
+```javascript
+i18n.configure({
+  defaultLocale: 'en',
+  resolve: function(locale){
+    $.ajax({
+      type: 'GET',
+      url: 'dict/' + locale + '.js',
+      dataType: 'json',
+      success: function(data) {
+        return data
+      },
+      async: false
+    });
+  }
+  ...
+})
 ```
 
 ## Browserify
