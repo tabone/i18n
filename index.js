@@ -66,6 +66,8 @@ i18n._init = function _init() {
    */
   this._refresh = false
 
+  this._resolve = null
+
   return this
 }
 
@@ -101,6 +103,8 @@ i18n.configure = function configure(opts) {
     this._dir = opts.dir
   } else if(opts.context) {
     this._context = opts.context
+  } else if(opts.resolve) {
+    this._resolve = opts.resolve
   } else {
     throw new Error('Please provide the directory where your dictionaries '
       + 'are located using the \'dir\' attribute or the dictionary context '
@@ -247,7 +251,7 @@ i18n.setDefaultLocale = function setDefaultLocale(locale) {
 }
 
 /**
- * method used to refresh the dictionary context of
+ * method used to refresh the dictionary context of i18n-light.
  * @param  {String}     locale    the name of the locale which i18n-light
  *                                will update its dictionary context.
  * @return {i18n}       the instance.
@@ -261,6 +265,8 @@ i18n.refreshContext = function refreshContext(locale) {
 
     this._context[locale]
      = JSON.parse(require('fs').readFileSync(path, 'utf-8'))
+  } else if(this._resolve !== null) {
+    this._context[locale] = JSON.parse(JSON.stringify(this._resolve(locale)))
   }
   
   return this
