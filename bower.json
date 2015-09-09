@@ -1,0 +1,29 @@
+{
+  "name": "i18n-light",
+  "main": "index.js",
+  "version": "0.4.2",
+  "homepage": "https://github.com/tabone/i18n",
+  "authors": [
+    "Luca Tabone <taboneluca3@gmail.com>"
+  ],
+  "description": "Lightweight NodeJS Internationalization Module.",
+  "moduleType": [
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "i18n-light",
+    "i18n",
+    "multilingual",
+    "internationalization",
+    "middleware"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
