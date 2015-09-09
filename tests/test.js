@@ -182,6 +182,18 @@ describe('i18n-light module', function() {
     })
   })
 
+  describe('version', function() {
+    beforeEach(function() {
+      i18n.configure(opts)
+    })
+
+    it('should be the same as the version inside package.json.', function() {
+      var packageJSON = require('fs')
+        .readFileSync(path.join(__dirname, '../package.json'), 'utf-8')
+      assert(i18n.version === JSON.parse(packageJSON).version)
+    })
+  })
+
   describe('setLocale', function() {
     var locale = null
     var altLocale = null
