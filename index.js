@@ -276,8 +276,7 @@ i18n.refreshContext = function refreshContext(locale) {
   var locale = (typeof locale === 'string') ? locale : this._currentLocale
 
   if(this._dir) {
-    var path = require('path')
-      .join(this._dir, locale + this._extension)
+    var path = this._dir + locale + this._extension
 
     this._context[locale]
      = JSON.parse(require('fs').readFileSync(path, 'utf-8'))
