@@ -1,7 +1,7 @@
 {
   "name": "i18n-light",
   "version": "0.4.2",
-  "description": "",
+  "description": "Lightweight NodeJS Internationalization Module.",
   "main": "index.js",
   "scripts": {
     "test": "mocha tests/test.js"
