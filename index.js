@@ -116,7 +116,7 @@ i18n.configure = function configure(opts) {
   }
 
   if(opts.dir) {
-    this._dir = opts.dir
+    this._tidyDirPath(opts.dir)
   } else if(opts.context) {
     this._context = opts.context
   } else if(opts.resolve) {
@@ -285,6 +285,17 @@ i18n.refreshContext = function refreshContext(locale) {
     this._context[locale] = JSON.parse(JSON.stringify(this._resolve(locale)))
   }
   
+  return this
+}
+
+/**
+ * method used to make sure that the 'dir' path has a trailing '/'.
+ * @param  {String} path the path to be given to 'dir'.
+ * @return {i18n}      the instance.
+ */
+i18n._tidyDirPath = function _tidyDirPath(path) {
+  if(path[path.length - 1] !== '/') path += '/'
+  this._dir = path
   return this
 }
 
