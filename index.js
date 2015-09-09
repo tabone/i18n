@@ -11,6 +11,13 @@ var i18n = {}
  * @return {i18n}   the instance.
  */
 i18n._init = function _init() {
+
+  /**
+   * i18n-light version.
+   * @type {String}
+   */
+  this.version = "0.4.2"
+
   /**
    * this is the locale which i18n-light will fallback
    * if the provided dictionary path isn't found on the
@@ -66,6 +73,15 @@ i18n._init = function _init() {
    */
   this._refresh = false
 
+  /**
+   * custom resolver for dictionary contexts. this function
+   * is only used by i18n-light the instance is not 
+   * configured with `dir` and `context` and is used when
+   * i18n-light needs a dictionary context for a locale.
+   * i18n-light passes the locale name as an argument and
+   * waits for json.
+   * @type {Object}
+   */
   this._resolve = null
 
   return this
