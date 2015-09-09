@@ -73,7 +73,7 @@ describe('i18n-light module', function() {
       })
 
       it('\'dir\'.', function() {
-        assert(i18n._dir === opts.dir)
+        assert(i18n._dir === opts.dir + '/')
       })
 
       it('\'cache\'.', function() {
@@ -191,6 +191,19 @@ describe('i18n-light module', function() {
       var packageJSON = require('fs')
         .readFileSync(path.join(__dirname, '../package.json'), 'utf-8')
       assert(i18n.version === JSON.parse(packageJSON).version)
+    })
+  })
+
+  describe('_tidyDirPath', function() {
+    beforeEach(function() {
+     i18n.configure(opts)
+    })
+    it('should include a trailing \'/\' to i18n.dir', function() {
+      var newPath = 'not/tidy'
+      i18n._tidyDirPath(newPath)
+      console.log(i18n._dir)
+      console.log((newPath + '/'))
+      assert(i18n._dir === (newPath + '/'))
     })
   })
 
