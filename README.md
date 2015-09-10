@@ -8,6 +8,10 @@
 npm install --save i18n-light
 ```
 
+```bash
+bower install --save i18n-light
+```
+
 ## Motiviation
 My main motivation in developing `i18n-light` was to create a localization module which enabled a developer to use the same storage (`dictionaries`) for both `Back-end` and `Front-end` code, thus having localized phrases more consistent and organized.
 
