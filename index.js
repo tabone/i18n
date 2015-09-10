@@ -16,7 +16,7 @@ i18n._init = function _init() {
    * i18n-light version.
    * @type {String}
    */
-  this.version = "0.4.2"
+  this.version = "0.5.0"
 
   /**
    * this is the locale which i18n-light will fallback
