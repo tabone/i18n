@@ -16,7 +16,7 @@ i18n._init = function _init() {
    * i18n-light version.
    * @type {String}
    */
-  this.version = "0.5.0"
+  this.version = '0.5.1'
 
   /**
    * this is the locale which i18n-light will fallback
@@ -403,7 +403,7 @@ i18n._translate = function _translate(path, def) {
     and the user has chosen to fallback to the default locale, we need
     to make sure that the context of the default locale exists!
    */
-  if(def && this._context[locale] === undefined)
+  if(this._context[locale] === undefined)
     this.refreshContext(this.locale)
 
   /**

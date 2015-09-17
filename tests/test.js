@@ -685,6 +685,18 @@ describe('i18n-light module', function() {
       context.it = JSON.parse(fs.readFileSync(localeDir + '/it.js', 'utf-8'))
     })
 
+    describe('clearing cache', function() {
+      beforeEach(function() {
+        i18n.configure(opts)
+        i18n.clearCache()
+      })
+
+      it('should refresh default locale context.', function() {
+        var path = 'greetings.text.hello'
+        assert(i18n.__(path) === context.en.greetings.text.hello)
+      })
+    })
+
     describe('when fallback === true', function() {
       beforeEach(function() {
         opts.fallback = true
