@@ -1,14 +1,15 @@
 'use strict'
+/* global describe it afterEach beforeEach */
 
-var i18n = undefined
-  , opts = undefined
-  , assert = require('assert')
-  , path = require('path')
-  , fs = require('fs')
-  , msg = null
+var i18n = null
+var opts = null
+var assert = require('assert')
+var path = require('path')
+var fs = require('fs')
+var msg = null
 
-describe('i18n-light module', function() {
-  beforeEach(function() {
+describe('i18n-light module', function () {
+  beforeEach(function () {
     i18n = require('../index')
     opts = {
       defaultLocale: 'en',
@@ -25,156 +26,156 @@ describe('i18n-light module', function() {
           'greetings': 'ciao'
         }
       },
-      resolve: function(locale) {
+      resolve: function (locale) {
         return {data: 'JSON from a resolve.'}
-      },
+      }
     }
   })
 
-  afterEach(function() {
+  afterEach(function () {
     i18n = undefined
     opts = undefined
   })
 
-  describe('configure method', function() {
+  describe('configure method', function () {
     msg = 'should set the default locale as the current locale'
-    it(msg, function() {
+    it(msg, function () {
       i18n.configure(opts)
       assert(i18n._currentLocale === opts.defaultLocale)
     })
 
     msg = 'when required attributes are not provided should throw an error:'
-    describe(msg, function() {
-      it('\'defaultLocale\'.', function() {
+    describe(msg, function () {
+      it('\'defaultLocale\'.', function () {
         delete opts.defaultLocale
-        assert.throws(function() {
+        assert.throws(function () {
           i18n.configure(opts)
         }, Error, /defaultLocale/)
       })
 
-      it('\'dir\' and \'context\'.', function() {
+      it('\'dir\' and \'context\'.', function () {
         delete opts.dir
         delete opts.context
         delete opts.resolve
-        assert.throws(function() {
+        assert.throws(function () {
           i18n.configure(opts)
         }, Error, /dir/)
       })
     })
 
     msg = 'should assign the valid attributes provided to i18n-light instance:'
-    describe(msg, function() {
-      beforeEach(function() {
+    describe(msg, function () {
+      beforeEach(function () {
         i18n.configure(opts)
       })
 
-      it('\'defaultLocale\'.', function() {
+      it('\'defaultLocale\'.', function () {
         assert(i18n._defaultLocale === opts.defaultLocale)
       })
 
-      it('\'dir\'.', function() {
+      it('\'dir\'.', function () {
         assert(i18n._dir === opts.dir + '/')
       })
 
-      it('\'cache\'.', function() {
+      it('\'cache\'.', function () {
         assert(i18n._cache === opts.cache)
       })
 
-      it('\'fallback\'.', function() {
+      it('\'fallback\'.', function () {
         assert(i18n._fallback === opts.fallback)
       })
 
-      it('\'extension\'.', function() {
+      it('\'extension\'.', function () {
         assert(i18n._extension === opts.extension)
       })
 
-      it('\'refresh\'.', function() {
+      it('\'refresh\'.', function () {
         assert(i18n._refresh === opts.refresh)
       })
     })
 
-    describe('context attribute', function() {
-      describe('if \'dir\' is omitted', function() {
-        beforeEach(function() {
+    describe('context attribute', function () {
+      describe('if \'dir\' is omitted', function () {
+        beforeEach(function () {
           delete opts.dir
           i18n.configure(opts)
         })
-        it('should be assigned', function() {
+        it('should be assigned', function () {
           assert(i18n._context === opts.context)
         })
       })
 
-      describe('if \'dir\' is not omitted', function() {
-        it('shouldn\'t be assigned', function() {
+      describe('if \'dir\' is not omitted', function () {
+        it('shouldn\'t be assigned', function () {
           assert(i18n._context !== opts.context)
         })
       })
     })
 
-    describe('resolve attribute', function() {
-      describe('if \'dir\' and context are omitted', function() {
-        beforeEach(function() {
+    describe('resolve attribute', function () {
+      describe('if \'dir\' and context are omitted', function () {
+        beforeEach(function () {
           delete opts.dir
           delete opts.context
           i18n.configure(opts)
         })
-        it('should be assigned', function() {
+        it('should be assigned', function () {
           assert(i18n._resolve === opts.resolve)
         })
       })
 
-      describe('if \'dir\' is not omitted', function() {
-        it('shouldn\'t be assigned', function() {
+      describe('if \'dir\' is not omitted', function () {
+        it('shouldn\'t be assigned', function () {
           assert(i18n._resolve !== opts.resolve)
         })
       })
 
-      describe('if \'context\' is not omitted', function() {
-        beforeEach(function() {
+      describe('if \'context\' is not omitted', function () {
+        beforeEach(function () {
           delete opts.dir
         })
-        it('shouldn\'t be assigned', function() {
+        it('shouldn\'t be assigned', function () {
           assert(i18n._resolve !== opts.resolve)
         })
       })
     })
 
     msg = 'when omittable fields are omitted they should use their defaults'
-    describe(msg, function() {
-      describe('extension attribute', function() {
-        beforeEach(function() {
+    describe(msg, function () {
+      describe('extension attribute', function () {
+        beforeEach(function () {
           delete opts.extension
           i18n.configure(opts)
         })
 
-        describe('when it is omitted', function() {
-          it('should default to \'.js\'', function() {
+        describe('when it is omitted', function () {
+          it('should default to \'.js\'', function () {
             assert(i18n._extension === '.js')
           })
         })
       })
 
-      describe('refresh attribute', function() {
-        beforeEach(function() {
+      describe('refresh attribute', function () {
+        beforeEach(function () {
           delete opts.refresh
           i18n.configure(opts)
         })
 
-        describe('when it is omitted', function() {
-          it('should default to \'false\'', function() {
+        describe('when it is omitted', function () {
+          it('should default to \'false\'', function () {
             assert(!(i18n._refresh))
           })
         })
       })
 
-      describe('cache attribute', function() {
-        beforeEach(function() {
+      describe('cache attribute', function () {
+        beforeEach(function () {
           delete opts.cache
           i18n.configure(opts)
         })
 
-        describe('when it is omitted', function() {
-          it('should default to \'true\'', function() {
+        describe('when it is omitted', function () {
+          it('should default to \'true\'', function () {
             assert(i18n._cache === true)
           })
         })
@@ -182,23 +183,23 @@ describe('i18n-light module', function() {
     })
   })
 
-  describe('version', function() {
-    beforeEach(function() {
+  describe('version', function () {
+    beforeEach(function () {
       i18n.configure(opts)
     })
 
-    it('should be the same as the version inside package.json.', function() {
+    it('should be the same as the version inside package.json.', function () {
       var packageJSON = require('fs')
         .readFileSync(path.join(__dirname, '../package.json'), 'utf-8')
       assert(i18n.version === JSON.parse(packageJSON).version)
     })
   })
 
-  describe('_tidyDirPath', function() {
-    beforeEach(function() {
-     i18n.configure(opts)
+  describe('_tidyDirPath', function () {
+    beforeEach(function () {
+      i18n.configure(opts)
     })
-    it('should include a trailing \'/\' to i18n.dir', function() {
+    it('should include a trailing \'/\' to i18n.dir', function () {
       var newPath = 'not/tidy'
       i18n._tidyDirPath(newPath)
       console.log(i18n._dir)
@@ -207,10 +208,10 @@ describe('i18n-light module', function() {
     })
   })
 
-  describe('setLocale', function() {
+  describe('setLocale', function () {
     var locale = null
     var altLocale = null
-    beforeEach(function() {
+    beforeEach(function () {
       locale = Object.keys(opts.context)[0]
       altLocale = Object.keys(opts.context)[1]
       i18n.configure(opts)
@@ -218,215 +219,220 @@ describe('i18n-light module', function() {
       delete i18n._context[locale]
     })
 
-    it('TEST INTERNAL: \'locale\' value should be defaultLocale.', function() {
+    it('TEST INTERNAL: \'locale\' value should be defaultLocale.', function () {
       assert(locale === opts.defaultLocale)
     })
 
-    describe('when current locale\'s context is not cached', function() {
-      describe('and this._cache === false (clear cache)', function() {
-        beforeEach(function() {
+    describe('when current locale\'s context is not cached', function () {
+      describe('and this._cache === false (clear cache)', function () {
+        beforeEach(function () {
           i18n._cache = false
           i18n.setLocale(locale)
         })
 
-        it('should only end up with current locale context.', function() {
+        it('should only end up with current locale context.', function () {
           assert(Object.keys(i18n._context).length === 1)
         })
 
-        it('should include the current locale dictionary context', function() {
+        it('should include the current locale dictionary context', function () {
           assert(i18n._context[locale] !== undefined)
         })
       })
 
-      describe('and this._cache === true (don\'t clear cache)', function() {
-        beforeEach(function() {
+      describe('and this._cache === true (don\'t clear cache)', function () {
+        beforeEach(function () {
           i18n._cache = true
           i18n.setLocale(locale)
         })
 
-        msg = 'should include the current locale dictionary context with the'
-          + 'other ones.'
-        it(msg, function() {
+        msg = 'should include the current locale dictionary context with the' +
+          'other ones.'
+        it(msg, function () {
           assert(Object.keys(i18n._context).length === 2)
         })
 
-        it('should include the current locale dictionary context.', function() {
+        msg = 'should include the current locale dictionary context.'
+        it(msg, function () {
           assert(i18n._context[locale] !== undefined)
         })
       })
     })
 
-    describe('when current locale\'s context is cached', function() {
+    describe('when current locale\'s context is cached', function () {
       var testResult = 'hello'
-      beforeEach(function() {
+      beforeEach(function () {
         i18n.configure(opts)
         i18n._context = {}
         i18n._context[locale] = testResult
         i18n._context[altLocale] = 'ciao'
       })
 
-      describe('when this._cache === false (clear cache)', function() {
-        beforeEach(function() {
+      describe('when this._cache === false (clear cache)', function () {
+        beforeEach(function () {
           i18n._cache = false
         })
 
-        describe('when refresh', function() {
-          describe('=== true (get new dictionary)', function() {
-            beforeEach(function() {
+        describe('when refresh', function () {
+          describe('=== true (get new dictionary)', function () {
+            beforeEach(function () {
               i18n.setLocale(locale, true)
             })
 
-            it('should only end up with current locale context.', function() {
+            it('should only end up with current locale context.', function () {
               assert(Object.keys(i18n._context).length === 1)
             })
 
-            it('should include the locale dictionary context', function() {
+            it('should include the locale dictionary context', function () {
               assert(i18n._context[locale] !== undefined)
             })
 
-            it('should updated locale dictionary context', function() {
+            it('should updated locale dictionary context', function () {
               assert(i18n._context[locale] !== opts.context[locale])
             })
           })
 
-          describe('=== false (keep current)', function() {
-            beforeEach(function() {
+          describe('=== false (keep current)', function () {
+            beforeEach(function () {
               i18n.setLocale(locale, false)
             })
 
-            it('should only end up with current locale context.', function() {
+            it('should only end up with current locale context.', function () {
               assert(Object.keys(i18n._context).length === 1)
             })
 
-            it('should include the locale dictionary context', function() {
+            it('should include the locale dictionary context', function () {
               assert(i18n._context[locale] !== undefined)
             })
 
-            it('should keep the old dictionary context.', function() {
+            it('should keep the old dictionary context.', function () {
               assert(i18n._context[locale] === testResult)
             })
           })
         })
 
-        describe('when this.refresh', function() {
-          describe('=== true (get new dictionary)', function() {
-            beforeEach(function() {
+        describe('when this.refresh', function () {
+          describe('=== true (get new dictionary)', function () {
+            beforeEach(function () {
               i18n._refresh = true
               i18n.setLocale(locale)
             })
 
-            it('should only end up with current locale context.', function() {
+            it('should only end up with current locale context.', function () {
               assert(Object.keys(i18n._context).length === 1)
             })
 
-            it('should include the locale dictionary context', function() {
+            it('should include the locale dictionary context', function () {
               assert(i18n._context[locale] !== undefined)
             })
 
-            it('should updated locale dictionary context', function() {
+            it('should updated locale dictionary context', function () {
               assert(i18n._context[locale] !== opts.context[locale])
             })
           })
 
-          describe('=== false (keep current)', function() {
-            beforeEach(function() {
+          describe('=== false (keep current)', function () {
+            beforeEach(function () {
               i18n._refresh = false
               i18n.setLocale(locale)
             })
 
-            it('should only end up with current locale context.', function() {
+            it('should only end up with current locale context.', function () {
               assert(Object.keys(i18n._context).length === 1)
             })
 
-            it('should include the locale dictionary context', function() {
+            it('should include the locale dictionary context', function () {
               assert(i18n._context[locale] !== undefined)
             })
 
-            it('should keep the old dictionary context.', function() {
+            it('should keep the old dictionary context.', function () {
               assert(i18n._context[locale] === testResult)
             })
           })
         })
       })
 
-      describe('when this._cache === true (don\'t clear cache)', function() {
-        beforeEach(function() {
+      describe('when this._cache === true (don\'t clear cache)', function () {
+        beforeEach(function () {
           i18n._cache = true
         })
 
-        describe('when refresh', function() {
-          describe('=== true (get new dictionary)', function() {
-            beforeEach(function() {
+        describe('when refresh', function () {
+          describe('=== true (get new dictionary)', function () {
+            beforeEach(function () {
               i18n.setLocale(locale, true)
             })
 
-            it('shouldn\'t end up with current locale context only.', function() {
+            msg = 'shouldn\'t end up with current locale context only.'
+            it(msg, function () {
               assert(Object.keys(i18n._context).length === 2)
             })
 
-            it('should have locale dictionary context', function() {
+            it('should have locale dictionary context', function () {
               assert(i18n._context[locale] !== undefined)
             })
 
-            it('should updated locale dictionary context', function() {
+            it('should updated locale dictionary context', function () {
               assert(i18n._context[locale] !== opts.context[locale])
             })
           })
 
-          describe('=== false (keep current)', function() {
-            beforeEach(function() {
+          describe('=== false (keep current)', function () {
+            beforeEach(function () {
               i18n.setLocale(locale, false)
             })
 
-            it('shouldn\'t end up with current locale context only.', function() {
+            msg = 'shouldn\'t end up with current locale context only.'
+            it(msg, function () {
               assert(Object.keys(i18n._context).length === 2)
             })
 
-            it('should have locale dictionary context', function() {
+            it('should have locale dictionary context', function () {
               assert(i18n._context[locale] !== undefined)
             })
 
-            it('should keep the old dictionary context', function() {
+            it('should keep the old dictionary context', function () {
               assert(i18n._context[locale] === testResult)
             })
           })
         })
 
-        describe('when this.refresh', function() {
-          describe('=== true (get new dictionary)', function() {
-            beforeEach(function() {
+        describe('when this.refresh', function () {
+          describe('=== true (get new dictionary)', function () {
+            beforeEach(function () {
               i18n._refresh = true
               i18n.setLocale(locale)
             })
 
-            it('shouldn\'t end up with current locale context only.', function() {
+            msg = 'shouldn\'t end up with current locale context only.'
+            it(msg, function () {
               assert(Object.keys(i18n._context).length === 2)
             })
 
-            it('should have locale dictionary context', function() {
+            it('should have locale dictionary context', function () {
               assert(i18n._context[locale] !== undefined)
             })
 
-            it('should updated locale dictionary context', function() {
+            it('should updated locale dictionary context', function () {
               assert(i18n._context[locale] !== opts.context[locale])
             })
           })
 
-          describe('=== false (keep current)', function() {
-            beforeEach(function() {
+          describe('=== false (keep current)', function () {
+            beforeEach(function () {
               i18n._refresh = false
               i18n.setLocale(locale)
             })
 
-            it('shouldn\'t end up with current locale context only.', function() {
+            msg = 'shouldn\'t end up with current locale context only.'
+            it(msg, function () {
               assert(Object.keys(i18n._context).length === 2)
             })
 
-            it('should have locale dictionary context', function() {
+            it('should have locale dictionary context', function () {
               assert(i18n._context[locale] !== undefined)
             })
 
-            it('should keep the old dictionary context', function() {
+            it('should keep the old dictionary context', function () {
               assert(i18n._context[locale] === testResult)
             })
           })
@@ -435,99 +441,99 @@ describe('i18n-light module', function() {
     })
   })
 
-  describe('getLocale', function() {
-    beforeEach(function() {
+  describe('getLocale', function () {
+    beforeEach(function () {
       i18n.configure(opts)
     })
 
-    it('should return the \'currentLocale\'.', function() {
+    it('should return the \'currentLocale\'.', function () {
       var newLocale = 'it'
       i18n.setLocale(newLocale)
       assert(i18n.getLocale() === newLocale)
     })
   })
 
-  describe('resetLocale', function() {
+  describe('resetLocale', function () {
     var newLocale = null
 
-    beforeEach(function() {
+    beforeEach(function () {
       i18n.configure(opts)
       newLocale = 'it'
     })
 
-    it('should change the \'currentLocale\' to the default one.', function() {
+    it('should change the \'currentLocale\' to the default one.', function () {
       i18n.setLocale(newLocale)
       assert(i18n.resetLocale()._currentLocale === opts.defaultLocale)
     })
   })
 
-  describe('setDefaultLocale', function() {
+  describe('setDefaultLocale', function () {
     var newLocale = null
 
-    beforeEach(function() {
+    beforeEach(function () {
       i18n.configure(opts)
       newLocale = 'it'
     })
 
-    it('should change the \'defaultLocale\'', function() {
+    it('should change the \'defaultLocale\'', function () {
       assert(i18n.setDefaultLocale(newLocale)._defaultLocale === newLocale)
     })
   })
 
-  describe('clearCache', function() {
-    beforeEach(function() {
+  describe('clearCache', function () {
+    beforeEach(function () {
       i18n.configure(opts)
     })
 
-    it('should clear the cached dictionaries.', function() {
+    it('should clear the cached dictionaries.', function () {
       assert(Object.keys(i18n.clearCache()._context).length === 0)
     })
   })
 
-  describe('refreshContext', function() {
+  describe('refreshContext', function () {
     var testContext = {
       en: 'test 1',
       it: 'test 2'
     }
 
-    describe('common functionality', function() {
-      beforeEach(function() {
+    describe('common functionality', function () {
+      beforeEach(function () {
         opts.defaultLocale = 'en'
         i18n.configure(opts)
         i18n._context = JSON.parse(JSON.stringify(testContext))
       })
 
-      describe('no arguments', function() {
+      describe('no arguments', function () {
         msg = 'should refresh the dictionary context of current locale.'
-        it(msg, function() {
+        it(msg, function () {
           assert(i18n.refreshContext()._context.en !== testContext.en)
         })
       })
 
-      describe('with arguments', function() {
-        msg = 'should refresh the dictionary context of the locale passed '
-          + 'as an argument'
-        it(msg, function() {
+      describe('with arguments', function () {
+        msg = 'should refresh the dictionary context of the locale passed ' +
+        'as an argument'
+        it(msg, function () {
           assert(i18n.refreshContext('it')._context.it !== testContext.it)
         })
       })
     })
 
-    describe('using \'dir\' attribute', function() {
-      beforeEach(function() {
+    describe('using \'dir\' attribute', function () {
+      beforeEach(function () {
         opts.defaultLocale = 'en'
         i18n.configure(opts)
       })
 
-      msg = 'should refresh the dictionary context of the locale passed '
-        + 'as an argument'
-      it(msg, function() {
+      msg = 'should refresh the dictionary context of the locale passed ' +
+        'as an argument'
+      it(msg, function () {
         assert(i18n.refreshContext('it')._context.it !== testContext.it)
       })
     })
 
-    describe('using \'resolve\' functionality', function() {
-      beforeEach(function() {
+    describe('using \'resolve\' functionality', function () {
+      beforeEach(function () {
         delete opts.dir
         delete opts.context
         opts.defaultLocale = 'en'
@@ -535,267 +541,267 @@ describe('i18n-light module', function() {
         i18n._context = JSON.parse(JSON.stringify(testContext))
       })
 
-      msg = 'should refresh the dictionary context of the locale passed '
-        + 'to use the JSON returned from resolve function.'
-      it(msg, function() {
+      msg = 'should refresh the dictionary context of the locale passed ' +
+        'to use the JSON returned from resolve function.'
+      it(msg, function () {
         assert(i18n.refreshContext('it')._context.it !== i18n._resolve('it'))
       })
     })
   })
 
-  describe('isCached', function() {
+  describe('isCached', function () {
     var noExistantLocale = 'es'
 
-    beforeEach(function() {
+    beforeEach(function () {
       i18n.configure(opts)
     })
 
-    msg = 'TEST RELATED: cached context should not has locale \''
-      + noExistantLocale + '\''
-    it(msg, function() {
+    msg = 'TEST RELATED: cached context should not has locale \'' +
+      noExistantLocale + '\''
+
+    it(msg, function () {
       assert(opts.context[noExistantLocale] === undefined)
     })
 
-    it('should return true if \'locale\' is cached', function() {
+    it('should return true if \'locale\' is cached', function () {
       assert(i18n.isCached('en'))
     })
 
-    it('should return false if \'locale\' is not cached.', function() {
+    it('should return false if \'locale\' is not cached.', function () {
       assert(!i18n.isCached(noExistantLocale))
     })
   })
 
-  describe('_setExtension', function() {
-    it('should include a \'.\' if it isn\'t prefixed with one', function() {
+  describe('_setExtension', function () {
+    it('should include a \'.\' if it isn\'t prefixed with one', function () {
       var ext = 'js'
       assert(i18n._setExtension(ext) === ('.' + ext))
     })
 
-    msg = 'should leave the extension untouched if it is prefied with '
-      + '\'.\''
-    it(msg, function() {
+    msg = 'should leave the extension untouched if it is prefied with ' +
+      '\'.\''
+
+    it(msg, function () {
       var ext = '.js'
       assert(i18n._setExtension(ext) === (ext))
     })
   })
 
-  describe('_getContext', function() {
-    beforeEach(function() {
+  describe('_getContext', function () {
+    beforeEach(function () {
       delete opts.dir
       i18n.configure(opts)
     })
 
-    it('should return the context of the locale', function() {
-      assert(i18n._getContext(opts.defaultLocale)
-          === opts.context[opts.defaultLocale])
+    it('should return the context of the locale', function () {
+      assert(i18n._getContext(opts.defaultLocale) ===
+        opts.context[opts.defaultLocale])
     })
   })
 
-  describe('__', function() {
+  describe('__', function () {
     var context = {}
-    beforeEach(function() {
+    beforeEach(function () {
       i18n.configure(opts)
       var localeDir = path.join(__dirname, 'locale')
       context.en = JSON.parse(fs.readFileSync(localeDir + '/en.js', 'utf-8'))
     })
 
-    describe('with no sprintf parameters', function() {
-      it('should return the localized phrase', function() {
-        assert(i18n.__('greetings.text.hello')
-          === context.en.greetings.text.hello)
+    describe('with no sprintf parameters', function () {
+      it('should return the localized phrase', function () {
+        assert(i18n.__('greetings.text.hello') ===
+          context.en.greetings.text.hello)
       })
     })
 
-    describe('with sprintf parameters', function() {
+    describe('with sprintf parameters', function () {
       msg = 'should return the localized phrase with the placeholders'
-      it(msg, function() {
+      it(msg, function () {
         var name = 'Tom'
-        assert(i18n.__('greetings.text.welcome', name)
-            === context.en.greetings.text.welcome.replace('%s', name))
+        assert(i18n.__('greetings.text.welcome', name) ===
+          context.en.greetings.text.welcome.replace('%s', name))
       })
     })
   })
 
-  describe('__n', function() {
+  describe('__n', function () {
     var tranPath = ''
-    beforeEach(function() {
+    beforeEach(function () {
       i18n.configure(opts)
       tranPath = 'this.is.a.path'
     })
 
-    describe('when last argument is not a number', function() {
-      it('should append \'.zero\' to the path', function() {
+    describe('when last argument is not a number', function () {
+      it('should append \'.zero\' to the path', function () {
         assert(!!~i18n.__n(tranPath).indexOf('.zero'))
       })
     })
 
-    describe('when last argument is a number', function() {
-      describe('when last argument is 0', function() {
-        it('should append \'.zero\' to the path', function() {
+    describe('when last argument is a number', function () {
+      describe('when last argument is 0', function () {
+        it('should append \'.zero\' to the path', function () {
           assert(!!~i18n.__n(tranPath, 0).indexOf('.zero'))
         })
       })
 
-      describe('when last argument is 1', function() {
-        it('should append \'.one\' to the path', function() {
+      describe('when last argument is 1', function () {
+        it('should append \'.one\' to the path', function () {
           assert(!!~i18n.__n(tranPath, 1).indexOf('.one'))
         })
       })
 
-      describe('when last argument > 1', function() {
-        it('should append \'.many\' to the path', function() {
+      describe('when last argument > 1', function () {
+        it('should append \'.many\' to the path', function () {
           assert(!!~i18n.__n(tranPath, 5).indexOf('.many'))
         })
       })
     })
 
-    describe('sprintf', function() {
+    describe('sprintf', function () {
       var context = {}
       var sfparam = 2
       var i18nCount = 3
-      beforeEach(function() {
+      beforeEach(function () {
         sfparam = 2
         i18nCount = 3
         var localeDir = path.join(__dirname, 'locale')
         context.en = JSON.parse(fs.readFileSync(localeDir + '/en.js', 'utf-8'))
       })
 
-      describe('when only path and count are given', function() {
+      describe('when only path and count are given', function () {
         it('should not use count as a sprintf param.', function () {
           assert(i18n.__n('messages', i18nCount) !== (sfparam + ' messages'))
         })
       })
 
       msg = 'when path, count and sprintf params are given'
-      describe(msg, function() {
+      describe(msg, function () {
         it('should use them as intended', function () {
-          assert(i18n.__n('messages', sfparam, i18nCount)
-            === (sfparam + ' messages'))
+          assert(i18n.__n('messages', sfparam, i18nCount) ===
+            (sfparam + ' messages'))
         })
       })
     })
   })
 
-  describe('_translate', function() {
+  describe('_translate', function () {
     var context = {}
 
-    beforeEach(function() {
+    beforeEach(function () {
       var localeDir = path.join(__dirname, 'locale')
       context.en = JSON.parse(fs.readFileSync(localeDir + '/en.js', 'utf-8'))
       context.it = JSON.parse(fs.readFileSync(localeDir + '/it.js', 'utf-8'))
     })
 
-    describe('clearing cache', function() {
-      beforeEach(function() {
+    describe('clearing cache', function () {
+      beforeEach(function () {
         i18n.configure(opts)
         i18n.clearCache()
       })
 
-      it('should refresh default locale context.', function() {
+      it('should refresh default locale context.', function () {
         var path = 'greetings.text.hello'
         assert(i18n.__(path) === context.en.greetings.text.hello)
       })
     })
 
-    describe('when fallback === true', function() {
-      beforeEach(function() {
+    describe('when fallback === true', function () {
+      beforeEach(function () {
         opts.fallback = true
         i18n.configure(opts)
         i18n.setLocale('it')
       })
 
-      describe('and path is', function() {
-        describe('good', function() {
-          it('should return the localized phrase.', function() {
-            assert(i18n._translate('greetings.text.hello')
-              === context.it.greetings.text.hello)
+      describe('and path is', function () {
+        describe('good', function () {
+          it('should return the localized phrase.', function () {
+            assert(i18n._translate('greetings.text.hello') ===
+              context.it.greetings.text.hello)
           })
         })
 
-        describe('invalid', function() {
-          describe('for both current and default locale', function() {
-            it('should return the path.', function() {
+        describe('invalid', function () {
+          describe('for both current and default locale', function () {
+            it('should return the path.', function () {
               var path = 'no.exist'
               assert(i18n._translate(path) === path)
             })
           })
 
-          describe('for current locale', function() {
-            it('should return the phrase from default locale.', function() {
+          describe('for current locale', function () {
+            it('should return the phrase from default locale.', function () {
               var path = 'messages.zero'
-              assert(i18n._translate(path)
-                === context.en.messages.zero)
+              assert(i18n._translate(path) === context.en.messages.zero)
             })
           })
         })
 
-        describe('short', function() {
-          describe('for both current and default locale', function() {
-            it('should return the path.', function() {
+        describe('short', function () {
+          describe('for both current and default locale', function () {
+            it('should return the path.', function () {
               var path = 'greetings'
               assert(i18n._translate(path) === path)
             })
           })
 
-          describe('for current locale', function() {
-            it('should return the phrase from default locale.', function() {
+          describe('for current locale', function () {
+            it('should return the phrase from default locale.', function () {
               var path = 'greetings.bye'
-              assert(i18n._translate(path)
-                === context.en.greetings.bye)
+              assert(i18n._translate(path) === context.en.greetings.bye)
             })
           })
         })
 
-        describe('long for current locale', function() {
-          describe('for both current and default locale', function() {
-            it('should return the path.', function() {
+        describe('long for current locale', function () {
+          describe('for both current and default locale', function () {
+            it('should return the path.', function () {
               var path = 'no.exist'
               assert(i18n._translate(path) === path)
             })
           })
 
-          describe('for current locale', function() {
-            it('should return the phrase from default locale.', function() {
+          describe('for current locale', function () {
+            it('should return the phrase from default locale.', function () {
               var path = 'greetings.text.welcome'
-              assert(i18n._translate(path)
-                === context.en.greetings.text.welcome)
+              assert(i18n._translate(path) ===
+                context.en.greetings.text.welcome)
             })
           })
         })
       })
     })
 
-    describe('when fallback === false', function() {
-      beforeEach(function() {
+    describe('when fallback === false', function () {
+      beforeEach(function () {
         opts.fallback = false
         i18n.configure(opts)
         i18n.setLocale('it')
       })
 
-      describe('and path is', function() {
-        describe('good', function() {
-          it('should return the localized phrase.', function() {
-            assert(i18n._translate('greetings.text.hello')
-              === context.it.greetings.text.hello)
+      describe('and path is', function () {
+        describe('good', function () {
+          it('should return the localized phrase.', function () {
+            assert(i18n._translate('greetings.text.hello') ===
+              context.it.greetings.text.hello)
           })
         })
 
-        describe('invalid for current locale', function() {
-          it('should return the path.', function() {
+        describe('invalid for current locale', function () {
+          it('should return the path.', function () {
             var path = 'no.exist'
             assert(i18n._translate(path) === path)
           })
         })
 
-        describe('short for current locale', function() {
-          it('should return the path.', function() {
+        describe('short for current locale', function () {
+          it('should return the path.', function () {
             var path = 'greetings.text'
             assert(i18n._translate(path) === path)
           })
         })
 
-        describe('long for current locale', function() {
-          it('should return the path.', function() {
+        describe('long for current locale', function () {
+          it('should return the path.', function () {
             var path = 'greetings.text.hello.woops'
             assert(i18n._translate(path) === path)
           })
