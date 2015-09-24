@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.org/tabone/i18n.svg?branch=master)](https://travis-ci.org/tabone/i18n)
-
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
 
 # i18n-light
