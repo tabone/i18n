@@ -202,8 +202,6 @@ describe('i18n-light module', function () {
     it('should include a trailing \'/\' to i18n.dir', function () {
       var newPath = 'not/tidy'
       i18n._tidyDirPath(newPath)
-      console.log(i18n._dir)
-      console.log((newPath + '/'))
       assert(i18n._dir === (newPath + '/'))
     })
   })
