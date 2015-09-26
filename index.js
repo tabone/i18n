@@ -381,7 +381,7 @@ i18n.__n = function __n (path) {
  */
 i18n._translate = function _translate (path, def) {
   /**
-   * the name of the name of the locale i18n-light will be using for the
+   * the name of the locale i18n-light will be using for the
    * translation.
    * @type {String}
    */
