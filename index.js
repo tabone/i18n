@@ -388,11 +388,10 @@ i18n._translate = function _translate (path, def) {
   var locale = (def) ? this._defaultLocale : this._currentLocale
 
   /*
-    when def is true i.e. a path hasn't been found in the current locale and
-    the user has chosen to fallback to the default locale, we need to make sure
-    that the context of the default locale exists!
+    if the locale being used for the translation is not cached, i18n-light
+    should retrieve.
    */
-  if (this._context[locale] === undefined) this.refreshContext(this.locale)
+  if (this._context[locale] === undefined) this.refreshContext(locale)
 
   /**
    * the dictionary context of the locale, i18n-light will be using for the
