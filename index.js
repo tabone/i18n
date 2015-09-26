@@ -18,30 +18,48 @@ i18n._init = function _init () {
   this.version = '0.5.2'
 
   /**
-   * this is the locale which i18n-light will fallback
-   * if the provided dictionary path isn't found on the
-   * current locale dictionary.
-   * @type {String}
-   */
-  this._defaultLocale = null
-
-  /**
-   * this is the directory where i18n-light will be
-   * searching dictionaries from.
-   * @type {String}
-   */
-  this._dir = null
-
-  /**
-   * indicates whether i18n-light should fallback to
-   * the defaultLocale if a dictionary path isn't found.
+   * indicates whether i18n-light should fallback to the defaultLocale if a
+   * dictionary path isn't found.
    * @type {Boolean}
    */
   this._fallback = true
 
   /**
-   * object which i18n-light will be using to store
-   * locale dictionaries contexts.
+   * indicates whether i18n-light should keep old dictionary contexts once the
+   * current locale is changed.
+   * @type {Boolean}
+   */
+  this._cache = true
+
+  /**
+   * indicates whether i18n-light should override existant dictionary contexts
+   * or not when a locale changes.
+   * @type {Boolean}
+   */
+  this._refresh = false
+
+  /**
+   * the dictionaries files extension.
+   * @type {String}
+   */
+  this._extension = '.js'
+
+  /**
+   * this is the locale which i18n-light will fallback if the provided
+   * dictionary path isn't found on the current locale dictionary.
+   * @type {String}
+   */
+  this._defaultLocale = null
+
+  /**
+   * this is the directory where i18n-light will be searching dictionaries from.
+   * @type {String}
+   */
+  this._dir = null
+
+  /**
+   * object which i18n-light will be using to store locale dictionaries
+   * contexts.
    * @type {Object}
    */
   this._context = {}
@@ -53,32 +71,10 @@ i18n._init = function _init () {
   this._currentLocale = null
 
   /**
-   * indicates whether i18n-light should keep old dictionary
-   * contexts once the current locale is changed.
-   * @type {Boolean}
-   */
-  this._cache = true
-
-  /**
-   * the dictionaries files extension.
-   * @type {String}
-   */
-  this._extension = '.js'
-
-  /**
-   * indicates whether i18n-light should override existant
-   * dictionary contexts or not when a locale changes.
-   * @type {Boolean}
-   */
-  this._refresh = false
-
-  /**
-   * custom resolver for dictionary contexts. this function
-   * is only used by i18n-light the instance is not
-   * configured with `dir` and `context` and is used when
-   * i18n-light needs a dictionary context for a locale.
-   * i18n-light passes the locale name as an argument and
-   * waits for json.
+   * custom resolver for dictionary contexts. this function is only used by
+   * i18n-light if the instance is not configured with `dir` or `context` and
+   * is used when i18n-light needs a dictionary context for a locale. i18n-light
+   * passes the locale name as an argument and waits for json.
    * @type {Object}
    */
   this._resolve = null
@@ -87,8 +83,8 @@ i18n._init = function _init () {
 }
 
 /**
- * method used to intialize the i18n-light instance.
- * can be considered as the object constructor.
+ * method used to intialize the i18n-light instance. can be considered as the
+ * object constructor.
  * @param  {Object}   opts    configuration object.
  * @return {i18n}     the instance.
  */
@@ -105,7 +101,7 @@ i18n.configure = function configure (opts) {
     ? opts.refresh : this._refresh
 
   this._extension =
-    this._setExtension((opts.extension || this._extension))
+    this._tidyExtension((opts.extension || this._extension))
 
   if (opts.defaultLocale) {
     this._defaultLocale = opts.defaultLocale
@@ -115,7 +111,7 @@ i18n.configure = function configure (opts) {
   }
 
   if (opts.dir) {
-    this._tidyDirPath(opts.dir)
+    this._dir = this._tidyDir(opts.dir)
   } else if (opts.context) {
     this._context = opts.context
   } else if (opts.resolve) {
@@ -131,14 +127,24 @@ i18n.configure = function configure (opts) {
 }
 
 /**
- * method used to format the extension string into a valud extension.
- * this is done by including a '.' if the extension string isn't prefixed
- * with one.
- * @param {String}    extension   an extension prifixed with '.'
+ * method used to format the extension string into a valid extension. this is
+ * done by including a '.' if the extension string isn't already prefixed with
+ * one.
+ * @param {String}    extension   an extension prefixed with '.'
  */
-i18n._setExtension = function _setExtension (extension) {
+i18n._tidyExtension = function _tidyExtension (extension) {
   if (extension[0] !== '.') extension = '.' + extension
   return extension
+}
+
+/**
+ * method used to make sure that the 'dir' path has a trailing '/'.
+ * @param  {String} path the path to be given to 'dir'.
+ * @return {String}      a path ending with a '/'. 
+ */
+i18n._tidyDir = function _tidyDir (path) {
+  if(path[path.length - 1] !== '/') path += '/'
+  return path
 }
 
 /**
@@ -156,11 +162,9 @@ i18n.init = function init () {
 }
 
 /**
- * method used to reset the current locale back to the
- * default locale.
- * @param {Boolean}   refresh     indicates whether the dictionary
- *                                context of the default locale
- *                                should be updated or not.
+ * method used to reset the current locale back to the default locale.
+ * @param {Boolean}   refresh     indicates whether the dictionary context of
+ *                                the default locale should be updated or not.
  * @return {i18n}     the instance.
  */
 i18n.resetLocale = function resetLocale (refresh) {
@@ -170,9 +174,8 @@ i18n.resetLocale = function resetLocale (refresh) {
 /**
  * method used to change the current locale.
  * @param {String}    locale      the new locale.
- * @param {Boolean}   refresh     indicates whether the dictionary
- *                                context of the current locale
- *                                should be updated or not.
+ * @param {Boolean}   refresh     indicates whether the dictionary context of
+ *                                the current locale should be updated or not.
  * @return {i18n}     the instance
  */
 i18n.setLocale = function setLocale (locale, refresh) {
@@ -194,20 +197,19 @@ i18n.setLocale = function setLocale (locale, refresh) {
     this.refreshContext()
   } else {
     /**
-     * indicates whether to refresh the current locale's
-     * dictionary context or not. if refresh is not passed
-     * i18n-light should fallback to this._refresh
+     * indicates whether to refresh the current locale's dictionary context or
+     * not. if refresh is not passed i18n-light should fallback to this._refresh
      * @type {Boolean}
      */
     refresh = (refresh !== undefined) ? refresh : this._refresh
 
     /**
-     * object which will contain the dictionary context of the current
-     * locale if this._cache === false (i.e. reset this._context) and
-     * refresh === false (i.e. keep the current locale dicionary context).
-     * this is done because when this.clearCache() is executed, i18n-light
-     * completly destroys this._context and thus losing the current
-     * locale's context making us unable to restore the locale's dictionary.
+     * object which will contain the dictionary context of the current locale if
+     * this._cache === false (i.e. reset this._context) and refresh === false
+     * (i.e. keep the current locale dicionary context). this is done because
+     * when this.clearCache() is executed, i18n-light completly destroys
+     * this._context and thus losing the current locale's context making us
+     * unable to restore the locale's dictionary.
      * @type {Object}
      */
     var context = null
@@ -228,14 +230,14 @@ i18n.setLocale = function setLocale (locale, refresh) {
 
     if (refresh) {
       /*
-        if refresh === true, i18n-light will retrieve the updated
-        dictionary context.
+        if refresh === true, i18n-light will retrieve the updated dictionary
+        context.
        */
       this.refreshContext()
     } else if (!(this._cache)) {
       /*
-        if user chooses to keep current dictionary context and to clear
-        the cache i18n-light will use the 'context' object.
+        if user chooses to keep current dictionary context and to clear the
+        cache i18n-light will use the 'context' object.
        */
       this._context[this._currentLocale] = context
     }
@@ -249,8 +251,7 @@ i18n.setLocale = function setLocale (locale, refresh) {
 }
 
 /**
- * method used to return the current locale i18n-light is
- * using.
+ * method used to return the current locale i18n-light is using.
  * @return {String}     the current locale.
  */
 i18n.getLocale = function getLocale () {
@@ -268,8 +269,8 @@ i18n.setDefaultLocale = function setDefaultLocale (locale) {
 
 /**
  * method used to refresh the dictionary context of i18n-light.
- * @param  {String}     locale    the name of the locale which i18n-light
- *                                will update its dictionary context.
+ * @param  {String}     locale    the name of the locale which i18n-light will
+ *                                update its dictionary context.
  * @return {i18n}       the instance.
  */
 i18n.refreshContext = function refreshContext (locale) {
@@ -288,17 +289,6 @@ i18n.refreshContext = function refreshContext (locale) {
 }
 
 /**
- * method used to make sure that the 'dir' path has a trailing '/'.
- * @param  {String} path the path to be given to 'dir'.
- * @return {i18n}      the instance.
- */
-i18n._tidyDirPath = function _tidyDirPath (path) {
-  if (path[path.length - 1] !== '/') path += '/'
-  this._dir = path
-  return this
-}
-
-/**
  * method used to get the dictionary context of a particular locale.
  * @param  {String}   locale    the locale name.
  * @return {Object}   The dictionary context
@@ -309,9 +299,8 @@ i18n._getContext = function _getContext (locale) {
 
 /**
  * method used to clear the context object cached data.
- * @param  {Boolean}    refresh    indicates whether to retrieve
- *                                 the dictionary context of the
- *                                 current locale.
+ * @param  {Boolean}    refresh    indicates whether to retrieve the dictionary
+ *                                 context of the current locale.
  * @return {i18n}       the instance.
  */
 i18n.clearCache = function clearCache (refresh) {
@@ -321,8 +310,8 @@ i18n.clearCache = function clearCache (refresh) {
 }
 
 /**
- * method used to determine whether a locale has
- * cached dictionary context or not.
+ * method used to determine whether a locale has cached dictionary context or
+ * not.
  * @param  {String}     locale    the locale name
  * @return {Boolean}    True if it has, false otherwise
  */
@@ -345,8 +334,8 @@ i18n.__ = function __ (path) {
 }
 
 /**
- * method used to translate a quantitative phrase. note that the i18n-light
- * uses the last parameter to determine the quantity.
+ * method used to translate a quantitative phrase. note that the i18n-light uses
+ * the last parameter to determine the quantity.
  * @param  {String}     path    the path of the localized phrase within the
  *                              dictionary context.
  * @return {String}     the translated quantitative phrase.
@@ -381,8 +370,8 @@ i18n.__n = function __n (path) {
 }
 
 /**
- * method used to go through the dictionary context of the locales
- * to retrieve a localized phrase.
+ * method used to go through the dictionary context of the locales to retrieve
+ * a localized phrase.
  * @param  {String}   path    the path of the localized phrase within the
  *                            dictionary context.
  * @param  {Boolean}  def     indicates wether to loop the current locale or
@@ -399,15 +388,15 @@ i18n._translate = function _translate (path, def) {
   var locale = (def) ? this._defaultLocale : this._currentLocale
 
   /*
-    when def is true i.e. a path hasn't been found in the current locale
-    and the user has chosen to fallback to the default locale, we need
-    to make sure that the context of the default locale exists!
+    when def is true i.e. a path hasn't been found in the current locale and
+    the user has chosen to fallback to the default locale, we need to make sure
+    that the context of the default locale exists!
    */
   if (this._context[locale] === undefined) this.refreshContext(this.locale)
 
   /**
-   * the dictionary context of the locale, i18n-light will be using for
-   * the translation.
+   * the dictionary context of the locale, i18n-light will be using for the
+   * translation.
    * @type {Object}
    */
   var obj = this._getContext(locale)
@@ -418,9 +407,8 @@ i18n._translate = function _translate (path, def) {
    */
   var pathArr = path.split('.')
   /*
-    i18n-light will be looping through each node of the path given and
-    while traversing the dictionary context of the current or default
-    locale.
+    i18n-light will be looping through each node of the path given and while
+    traversing the dictionary context of the current or default locale.
    */
   for (var i = 0; i < pathArr.length; i++) {
     /**
@@ -430,8 +418,8 @@ i18n._translate = function _translate (path, def) {
     var node = pathArr[i]
 
     /**
-     * indicates whether it is the last loop or not. if so we will be
-     * expecting that typeof node === 'string'
+     * indicates whether it is the last loop or not. if so we will be expecting
+     * that typeof node === 'string'
      * @type {Boolean}
      */
     var last = (i === (pathArr.length - 1))

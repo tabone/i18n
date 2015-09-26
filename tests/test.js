@@ -38,12 +38,6 @@ describe('i18n-light module', function () {
   })
 
   describe('configure method', function () {
-    msg = 'should set the default locale as the current locale'
-    it(msg, function () {
-      i18n.configure(opts)
-      assert(i18n._currentLocale === opts.defaultLocale)
-    })
-
     msg = 'when required attributes are not provided should throw an error:'
     describe(msg, function () {
       it('\'defaultLocale\'.', function () {
@@ -53,7 +47,7 @@ describe('i18n-light module', function () {
         }, Error, /defaultLocale/)
       })
 
-      it('\'dir\' and \'context\'.', function () {
+      it('\'dir\', \'context\' and \'resolve\'.', function () {
         delete opts.dir
         delete opts.context
         delete opts.resolve
@@ -69,28 +63,28 @@ describe('i18n-light module', function () {
         i18n.configure(opts)
       })
 
-      it('\'defaultLocale\'.', function () {
-        assert(i18n._defaultLocale === opts.defaultLocale)
-      })
-
-      it('\'dir\'.', function () {
-        assert(i18n._dir === opts.dir + '/')
+      it('\'fallback\'.', function () {
+        assert(i18n._fallback === opts.fallback)
       })
 
       it('\'cache\'.', function () {
         assert(i18n._cache === opts.cache)
       })
 
-      it('\'fallback\'.', function () {
-        assert(i18n._fallback === opts.fallback)
+      it('\'refresh\'.', function () {
+        assert(i18n._refresh === opts.refresh)
       })
 
       it('\'extension\'.', function () {
         assert(i18n._extension === opts.extension)
       })
 
-      it('\'refresh\'.', function () {
-        assert(i18n._refresh === opts.refresh)
+      it('\'defaultLocale\'.', function () {
+        assert(i18n._defaultLocale === opts.defaultLocale)
+      })
+
+      it('\'dir\'.', function () {
+        assert(i18n._dir === opts.dir + '/')
       })
     })
 
@@ -113,7 +107,7 @@ describe('i18n-light module', function () {
     })
 
     describe('resolve attribute', function () {
-      describe('if \'dir\' and context are omitted', function () {
+      describe('if \'dir\' and \'context\' are omitted', function () {
         beforeEach(function () {
           delete opts.dir
           delete opts.context
@@ -142,28 +136,15 @@ describe('i18n-light module', function () {
 
     msg = 'when omittable fields are omitted they should use their defaults'
     describe(msg, function () {
-      describe('extension attribute', function () {
+      describe('fallback attribute', function () {
         beforeEach(function () {
-          delete opts.extension
+          delete opts.fallback
           i18n.configure(opts)
         })
 
         describe('when it is omitted', function () {
-          it('should default to \'.js\'', function () {
-            assert(i18n._extension === '.js')
-          })
-        })
-      })
-
-      describe('refresh attribute', function () {
-        beforeEach(function () {
-          delete opts.refresh
-          i18n.configure(opts)
-        })
-
-        describe('when it is omitted', function () {
-          it('should default to \'false\'', function () {
-            assert(!(i18n._refresh))
+          it('should default to \'true\'', function () {
+            assert(i18n._fallback === true)
           })
         })
       })
@@ -180,6 +161,31 @@ describe('i18n-light module', function () {
           })
         })
       })
+      describe('refresh attribute', function () {
+        beforeEach(function () {
+          delete opts.refresh
+          i18n.configure(opts)
+        })
+
+        describe('when it is omitted', function () {
+          it('should default to \'false\'', function () {
+            assert(!(i18n._refresh))
+          })
+        })
+      })
+
+      describe('extension attribute', function () {
+        beforeEach(function () {
+          delete opts.extension
+          i18n.configure(opts)
+        })
+
+        describe('when it is omitted', function () {
+          it('should default to \'.js\'', function () {
+            assert(i18n._extension === '.js')
+          })
+        })
+      })
     })
   })
 
@@ -192,17 +198,6 @@ describe('i18n-light module', function () {
       var packageJSON = require('fs')
         .readFileSync(path.join(__dirname, '../package.json'), 'utf-8')
       assert(i18n.version === JSON.parse(packageJSON).version)
-    })
-  })
-
-  describe('_tidyDirPath', function () {
-    beforeEach(function () {
-      i18n.configure(opts)
-    })
-    it('should include a trailing \'/\' to i18n.dir', function () {
-      var newPath = 'not/tidy'
-      i18n._tidyDirPath(newPath)
-      assert(i18n._dir === (newPath + '/'))
     })
   })
 
@@ -570,18 +565,28 @@ describe('i18n-light module', function () {
     })
   })
 
-  describe('_setExtension', function () {
-    it('should include a \'.\' if it isn\'t prefixed with one', function () {
-      var ext = 'js'
-      assert(i18n._setExtension(ext) === ('.' + ext))
+  describe('_tidyExtension method', function () {
+    it('should prepend a \'.\' if it doesn\'t have one.', function () {
+      var ext = 'json'
+      assert(i18n._tidyExtension(ext) === '.' + ext)
     })
 
-    msg = 'should leave the extension untouched if it is prefied with ' +
-      '\'.\''
+    it('should do nothing if it begins with \'.\'.', function () {
+      var ext = '.json'
+      assert(i18n._tidyExtension(ext) === ext)
+    })
+  })
 
-    it(msg, function () {
-      var ext = '.js'
-      assert(i18n._setExtension(ext) === (ext))
+  describe('_tidyDir method', function () {
+    it('should append a \'/\' if it doesn\' have one.', function () {
+      var path = 'dict'
+      console.log(i18n._tidyDir(path))
+      assert(i18n._tidyDir(path) === path + '/')
+    })
+
+    it('should do nothing if it ends with \'/\'.', function () {
+      var path = 'dict/'
+      assert(i18n._tidyDir(path) === path)
     })
   })
 
