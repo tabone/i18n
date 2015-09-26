@@ -580,7 +580,6 @@ describe('i18n-light module', function () {
   describe('_tidyDir method', function () {
     it('should append a \'/\' if it doesn\' have one.', function () {
       var path = 'dict'
-      console.log(i18n._tidyDir(path))
       assert(i18n._tidyDir(path) === path + '/')
     })
 
