@@ -140,10 +140,10 @@ i18n._tidyExtension = function _tidyExtension (extension) {
 /**
  * method used to make sure that the 'dir' path has a trailing '/'.
  * @param  {String} path the path to be given to 'dir'.
- * @return {String}      a path ending with a '/'. 
+ * @return {String}      a path ending with a '/'.
  */
 i18n._tidyDir = function _tidyDir (path) {
-  if(path[path.length - 1] !== '/') path += '/'
+  if (path[path.length - 1] !== '/') path += '/'
   return path
 }
 
