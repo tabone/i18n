@@ -201,6 +201,48 @@ describe('i18n-light module', function () {
     })
   })
 
+  describe('init', function () {
+    var req = null
+    var res = null
+    var next = null
+
+    beforeEach(function () {
+      i18n.configure(opts)
+      req = {}
+      res = {
+        locals: {}
+      }
+      next = {
+        called: 0,
+        fn: function() {
+          this.called++
+        }
+      }
+    })
+
+    it('should return a function', function () {
+      assert(i18n.init() instanceof Function)
+    })
+
+    describe('when middleware returned is invoked', function () {
+      beforeEach(function () {
+        i18n.init()(req, res, next.fn.bind(next))
+      })
+
+      it('should set .i18n equals to the instance.', function () {
+        assert(res.i18n === i18n)
+      })
+
+      it('should set .locals.i18n equals to the instance.', function () {
+        assert(res.locals.i18n === i18n)
+      })
+
+      it('should invoke next().', function () {
+        assert(next.called === 1)
+      })
+    })
+  })
+
   describe('setLocale', function () {
     var locale = null
     var altLocale = null
@@ -478,8 +520,19 @@ describe('i18n-light module', function () {
       i18n.configure(opts)
     })
 
-    it('should clear the cached dictionaries.', function () {
-      assert(Object.keys(i18n.clearCache()._context).length === 0)
+    describe('if refresh is undefined or false', function () {
+      it('should clear the cached dictionaries.', function () {
+        assert(Object.keys(i18n.clearCache()._context).length === 0)
+      })
+    })
+
+    describe('if refresh is true', function () {
+      it('should only have current locale directory cached.', function () {
+        i18n.clearCache(true)._context
+
+        assert(Object.keys(i18n._context).length === 1
+          && i18n._context[i18n._currentLocale] !== undefined)
+      })
     })
   })
 
