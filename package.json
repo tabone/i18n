@@ -4,7 +4,8 @@
   "description": "Lightweight NodeJS Internationalization Module.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests/test.js"
+    "test": "./node_modules/istanbul/lib/cli.js cover ./node_modules/.bin/_mocha tests/test.js",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
   },
   "keywords": [
     "i18n-light",
@@ -20,6 +21,8 @@
   "author": "Luca Tabone <taboneluca3@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "coveralls": "^2.11.4",
+    "istanbul": "^0.3.22",
     "mocha": "^2.2.4"
   },
   "dependencies": {
