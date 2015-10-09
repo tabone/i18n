@@ -381,8 +381,7 @@ i18n.__n = function __n (path) {
  */
 i18n._translate = function _translate (path, def) {
   /**
-   * the name of the locale i18n-light will be using for the
-   * translation.
+   * the name of the locale i18n-light will be using for the translation.
    * @type {String}
    */
   var locale = (def) ? this._defaultLocale : this._currentLocale
