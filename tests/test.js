@@ -214,7 +214,7 @@ describe('i18n-light module', function () {
       }
       next = {
         called: 0,
-        fn: function() {
+        fn: function () {
           this.called++
         }
       }
@@ -530,8 +530,8 @@ describe('i18n-light module', function () {
       it('should only have current locale directory cached.', function () {
         i18n.clearCache(true)._context
 
-        assert(Object.keys(i18n._context).length === 1
-          && i18n._context[i18n._currentLocale] !== undefined)
+        assert(Object.keys(i18n._context).length === 1 &&
+          i18n._context[i18n._currentLocale] !== undefined)
       })
     })
   })
